@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "listings": "מוצרים",
+    "howItWorks": "איך זה עובד?",
+    "login": "כניסה",
+    "sellerDashboard": "לוח המוכר",
+    "orders": "הזמנות",
+    "logout": "יציאה"
+  },
+  "listing": {
+    "mamad": "ממד",
+    "migounit": "מיגונית",
+    "other": "אחר"
+  }
+}

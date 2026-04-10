@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "listings": "Listings",
+    "howItWorks": "How It Works",
+    "login": "Login",
+    "sellerDashboard": "Seller Dashboard",
+    "orders": "My Orders",
+    "logout": "Logout"
+  },
+  "listing": {
+    "mamad": "Mamad",
+    "migounit": "Migounit",
+    "other": "Other"
+  }
+}
