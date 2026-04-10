@@ -42,7 +42,9 @@ export function Navbar() {
         <Link href="/how-it-works">איך זה עובד?</Link>
         {user ? (
           <>
-            <Link href="/orders">הזמנות</Link>
+            {role === 'buyer' || role === null ? (
+              <Link href="/orders">הזמנות</Link>
+            ) : null}
             {role === 'seller' && (
               <Link href="/seller/dashboard">לוח המוכר</Link>
             )}
