@@ -31,7 +31,7 @@ export default function LoginPage() {
             <span className="text-white font-black text-2xl">מ</span>
           </div>
           <h1 className="text-2xl font-black text-navy-900">כניסה לחשבון</h1>
-          <p className="text-gray-500 text-sm mt-1">ברוכים השבים לממד שוק</p>
+          <p className="text-gray-500 text-sm mt-1">ברוכים השבים לממ&quot;דלן</p>
         </div>
 
         {/* Card */}

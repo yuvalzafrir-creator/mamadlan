@@ -58,7 +58,7 @@ export function Navbar() {
             <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-black text-sm">מ</span>
             </div>
-            <span className="font-black text-lg text-navy-900 hidden sm:block">ממד שוק</span>
+            <span className="font-black text-lg text-navy-900 hidden sm:block">ממ&quot;דלן</span>
           </Link>
 
           {/* Desktop links */}

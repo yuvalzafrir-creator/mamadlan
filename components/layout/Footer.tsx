@@ -11,7 +11,7 @@ export function Footer() {
               <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-black text-sm">מ</span>
               </div>
-              <span className="font-black text-lg">ממד שוק</span>
+              <span className="font-black text-lg">ממ&quot;דלן</span>
             </div>
             <p className="text-navy-300 text-sm leading-relaxed">
               השוק המוביל לממ&quot;דים ומיגוניות יד שנייה בישראל. רכישה בטוחה, מוכרים מאומתים, משלוח נוח.
@@ -50,7 +50,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-navy-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-navy-400">
-          <p>© {new Date().getFullYear()} ממד שוק. כל הזכויות שמורות.</p>
+          <p>© {new Date().getFullYear()} ממ&quot;דלן. כל הזכויות שמורות.</p>
           <p>תשלומים מאובטחים על ידי Stripe</p>
         </div>
       </div>

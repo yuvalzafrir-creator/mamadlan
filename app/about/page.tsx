@@ -1,9 +1,9 @@
 export default function AboutPage() {
   return (
     <main className="max-w-3xl mx-auto px-6 py-12" dir="rtl">
-      <h1 className="text-3xl font-bold mb-6">אודות ממד שוק</h1>
+      <h1 className="text-3xl font-bold mb-6">אודות ממ&quot;דלן</h1>
       <p className="text-gray-700 mb-4">
-        ממד שוק הוא שוק יד שנייה לממ&quot;דים ומיגוניות — מבני מיגון ניידים שהיו בשימוש נרחב
+        ממ&quot;דלן הוא שוק יד שנייה לממ&quot;דים ומיגוניות — מבני מיגון ניידים שהיו בשימוש נרחב
         בתקופת המלחמה.
       </p>
       <p className="text-gray-700 mb-4">

@@ -11,7 +11,7 @@ const heebo = Heebo({
 })
 
 export const metadata: Metadata = {
-  title: 'ממד שוק — ממדים ומיגוניות למכירה',
+  title: 'ממ"דלן — ממדים ומיגוניות למכירה',
   description: 'שוק יד שנייה לממ"דים ומיגוניות במחירים נוחים',
 }
 
