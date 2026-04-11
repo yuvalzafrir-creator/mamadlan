@@ -2,15 +2,15 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
-const TYPE_LABELS: Record<string, string> = { mamad: 'ממד', migounit: 'מיגונית', other: 'אחר' }
+const TYPE_LABELS: Record<string, string>    = { mamad: 'ממ"ד', migounit: 'מיגונית', other: 'אחר' }
 const SHIPPING_LABELS: Record<string, string> = {
-  seller_ships: 'המוכר מסדר משלוח',
+  seller_ships:   'המוכר מסדר משלוח',
   platform_ships: 'האתר מסדר משלוח',
-  pickup_only: 'איסוף עצמי בלבד',
+  pickup_only:    'איסוף עצמי בלבד',
 }
 const CONDITION_LABELS: Record<string, string> = {
-  new: 'חדש',
-  used: 'משומש',
+  new:         'חדש',
+  used:        'משומש',
   refurbished: 'משופץ',
 }
 
@@ -24,77 +24,143 @@ export default async function ListingPage({ params }: { params: { id: string } }
 
   if (!listing) notFound()
 
-  const seller = listing.profiles as any
+  const seller    = listing.profiles as any
+  const typeLabel = TYPE_LABELS[listing.type] ?? listing.type
+  const priceILS  = (listing.price / 100).toLocaleString('he-IL')
 
   return (
-    <main className="max-w-3xl mx-auto p-6" dir="rtl">
-      {listing.photos?.[0] && (
-        <img
-          src={listing.photos[0]}
-          alt={TYPE_LABELS[listing.type] ?? listing.type}
-          className="w-full h-72 object-cover rounded-lg mb-6"
-        />
-      )}
-
-      <div className="flex justify-between items-start mb-4">
-        <h1 className="text-3xl font-bold">{TYPE_LABELS[listing.type] ?? listing.type}</h1>
-        {seller?.verified && (
-          <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-            ✓ מוכר מאומת
-          </span>
-        )}
-      </div>
-
-      <p className="text-2xl font-bold text-blue-700 mb-4">
-        ₪{(listing.price / 100).toLocaleString('he-IL')}
-      </p>
-
-      <div className="grid grid-cols-2 gap-4 bg-gray-50 rounded p-4 mb-6 text-sm">
-        <div>
-          <span className="text-gray-500">מידות</span>
-          <p className="font-medium">
-            {listing.length_m}×{listing.width_m}×{listing.height_m} מ'
-          </p>
+    <main dir="rtl" className="bg-gray-50 min-h-screen">
+      {/* Breadcrumb */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center gap-2 text-sm text-gray-500">
+          <Link href="/" className="hover:text-navy-900 transition-colors">בית</Link>
+          <span>/</span>
+          <Link href="/listings" className="hover:text-navy-900 transition-colors">מוצרים</Link>
+          <span>/</span>
+          <span className="text-navy-900 font-medium">{typeLabel}</span>
         </div>
-        {listing.condition && (
-          <div>
-            <span className="text-gray-500">מצב</span>
-            <p className="font-medium">{CONDITION_LABELS[listing.condition] ?? listing.condition}</p>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          {/* Left: image + details */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Image */}
+            <div className="card overflow-hidden">
+              {listing.photos?.[0] ? (
+                <img
+                  src={listing.photos[0]}
+                  alt={typeLabel}
+                  className="w-full h-80 object-cover"
+                />
+              ) : (
+                <div className="w-full h-80 bg-gradient-to-br from-navy-100 to-brand-100 flex items-center justify-center">
+                  <span className="text-8xl opacity-20">🏗️</span>
+                </div>
+              )}
+            </div>
+
+            {/* Specs */}
+            <div className="card p-6">
+              <h2 className="font-bold text-navy-900 mb-4">פרטי המוצר</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 mb-0.5">סוג</p>
+                  <p className="font-semibold text-navy-900">{typeLabel}</p>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 mb-0.5">מידות</p>
+                  <p className="font-semibold text-navy-900">
+                    {listing.length_m}×{listing.width_m}×{listing.height_m} מ&apos;
+                  </p>
+                </div>
+                {listing.condition && (
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-xs text-gray-400 mb-0.5">מצב</p>
+                    <p className="font-semibold text-navy-900">
+                      {CONDITION_LABELS[listing.condition] ?? listing.condition}
+                    </p>
+                  </div>
+                )}
+                {listing.location && (
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-xs text-gray-400 mb-0.5">מיקום</p>
+                    <p className="font-semibold text-navy-900">{listing.location}</p>
+                  </div>
+                )}
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 mb-0.5">משלוח</p>
+                  <p className="font-semibold text-navy-900">
+                    {SHIPPING_LABELS[listing.shipping_option] ?? listing.shipping_option}
+                  </p>
+                </div>
+                {listing.quantity && listing.quantity > 1 && (
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-xs text-gray-400 mb-0.5">כמות זמינה</p>
+                    <p className="font-semibold text-navy-900">{listing.quantity}</p>
+                  </div>
+                )}
+              </div>
+
+              {listing.description && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <p className="text-xs text-gray-400 mb-1">תיאור</p>
+                  <p className="text-gray-700 leading-relaxed">{listing.description}</p>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-        {listing.location && (
-          <div>
-            <span className="text-gray-500">מיקום</span>
-            <p className="font-medium">{listing.location}</p>
+
+          {/* Right: price + seller + CTA */}
+          <div className="lg:col-span-2 space-y-4">
+            {/* Price card */}
+            <div className="card p-6 sticky top-20">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p className="text-3xl font-black text-brand-600">₪{priceILS}</p>
+                  {listing.shipping_price && listing.shipping_option === 'seller_ships' && (
+                    <p className="text-xs text-gray-400 mt-1">
+                      + ₪{(listing.shipping_price / 100).toLocaleString('he-IL')} משלוח
+                    </p>
+                  )}
+                </div>
+                {seller?.verified && (
+                  <span className="badge-verified">✓ מאומת</span>
+                )}
+              </div>
+
+              {/* Seller info */}
+              <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                <p className="text-xs text-gray-400 mb-0.5">המוכר</p>
+                <p className="font-bold text-navy-900">{seller?.business_name ?? seller?.name}</p>
+                {seller?.phone && (
+                  <p className="text-sm text-gray-500 mt-0.5">{seller.phone}</p>
+                )}
+              </div>
+
+              {/* Trust signals */}
+              <ul className="space-y-2 mb-5 text-sm text-gray-500">
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> תשלום מאובטח דרך Stripe
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> הגנת קונה מובנית
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> תמיכה בעברית
+                </li>
+              </ul>
+
+              <Link
+                href={`/checkout/${listing.id}`}
+                className="btn-primary w-full text-base py-3.5 justify-center"
+              >
+                לרכישה מאובטחת ←
+              </Link>
+            </div>
           </div>
-        )}
-        <div>
-          <span className="text-gray-500">משלוח</span>
-          <p className="font-medium">{SHIPPING_LABELS[listing.shipping_option] ?? listing.shipping_option}</p>
         </div>
-        {listing.quantity && listing.quantity > 1 && (
-          <div>
-            <span className="text-gray-500">כמות זמינה</span>
-            <p className="font-medium">{listing.quantity}</p>
-          </div>
-        )}
       </div>
-
-      {listing.description && (
-        <p className="text-gray-700 mb-6">{listing.description}</p>
-      )}
-
-      <div className="border rounded p-4 mb-6">
-        <p className="font-semibold">{seller?.business_name ?? seller?.name}</p>
-        {seller?.phone && <p className="text-gray-500 text-sm">{seller.phone}</p>}
-      </div>
-
-      <Link
-        href={`/checkout/${listing.id}`}
-        className="block w-full text-center bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold"
-      >
-        לרכישה
-      </Link>
     </main>
   )
 }
