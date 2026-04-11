@@ -3,66 +3,128 @@ import { useState, useEffect } from 'react'
 
 const STEPS = [
   {
+    icon: '🏗️',
     title: 'מה זה ממד / מיגונית?',
     body: 'ממד (מרחב מוגן דירתי) ומיגונית הם מבני מיגון ניידים שהיו בשימוש נרחב בתקופת המלחמה. כיום ניתן לרכוש אותם במחירים נוחים.',
   },
   {
-    title: 'חיפוש ומסנן',
+    icon: '🔍',
+    title: 'חיפוש חכם',
     body: 'השתמש במסנני החיפוש לבחור סוג, מידות, מחיר ואזור. כל מוצר מציג את פרטי המוכר וסוג המשלוח.',
   },
   {
-    title: 'תשלום ומשלוח',
+    icon: '💳',
+    title: 'תשלום מאובטח',
     body: 'התשלום מאובטח דרך Stripe. ניתן לבחור משלוח מהמוכר, משלוח דרך האתר, או איסוף עצמי.',
   },
   {
+    icon: '🛡️',
     title: 'הגנת קונה',
     body: 'התשלום מוחזק עד לאישור קבלת המוצר. במקרה של בעיה, צרו קשר עם שירות הלקוחות שלנו.',
   },
 ]
 
 export function BuyerWelcomeModal() {
-  const [open, setOpen] = useState(false)
-  const [step, setStep] = useState(0)
+  const [open, setOpen]   = useState(false)
+  const [step, setStep]   = useState(0)
+  const [leaving, setLeaving] = useState(false)
 
   useEffect(() => {
-    if (!localStorage.getItem('buyer_walkthrough_seen')) setOpen(true)
+    if (!localStorage.getItem('buyer_walkthrough_seen')) {
+      // slight delay so page renders first
+      const t = setTimeout(() => setOpen(true), 600)
+      return () => clearTimeout(t)
+    }
   }, [])
 
   function dismiss() {
-    localStorage.setItem('buyer_walkthrough_seen', '1')
-    setOpen(false)
+    setLeaving(true)
+    setTimeout(() => {
+      localStorage.setItem('buyer_walkthrough_seen', '1')
+      setOpen(false)
+      setLeaving(false)
+    }, 250)
   }
 
   if (!open) return null
 
+  const isLast = step === STEPS.length - 1
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-md w-full p-6" dir="rtl">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">ברוכים הבאים</h2>
-          <button onClick={dismiss} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+    <div
+      className={`fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 transition-all duration-300 ${
+        leaving ? 'opacity-0' : 'opacity-100'
+      }`}
+      dir="rtl"
+    >
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-navy-900/50 backdrop-blur-sm"
+        onClick={dismiss}
+      />
+
+      {/* Sheet */}
+      <div
+        className={`relative bg-white rounded-3xl sm:rounded-2xl w-full max-w-md shadow-glass transition-all duration-300 ${
+          leaving ? 'translate-y-8 opacity-0' : 'translate-y-0 opacity-100'
+        }`}
+        style={{ animation: leaving ? undefined : 'slideUp 0.4s cubic-bezier(0.16,1,0.3,1)' }}
+      >
+        {/* Close button */}
+        <button
+          onClick={dismiss}
+          className="absolute top-4 left-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors text-sm"
+        >
+          ✕
+        </button>
+
+        {/* Icon + header */}
+        <div className="pt-8 px-6 text-center">
+          <div className="w-16 h-16 bg-brand-50 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+            {STEPS[step].icon}
+          </div>
+          <h2 className="text-xl font-black text-navy-900 mb-1">{STEPS[step].title}</h2>
         </div>
-        <div className="flex gap-1 mb-6">
+
+        {/* Body */}
+        <div className="px-6 py-4">
+          <p className="text-gray-500 text-center leading-relaxed">{STEPS[step].body}</p>
+        </div>
+
+        {/* Progress dots */}
+        <div className="flex justify-center gap-1.5 px-6 pb-2">
           {STEPS.map((_, i) => (
-            <div
+            <button
               key={i}
-              className={`h-1 flex-1 rounded ${i <= step ? 'bg-blue-600' : 'bg-gray-200'}`}
+              onClick={() => setStep(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === step ? 'w-6 bg-brand-600' : 'w-1.5 bg-gray-200'
+              }`}
             />
           ))}
         </div>
-        <h3 className="font-semibold text-lg mb-2">{STEPS[step].title}</h3>
-        <p className="text-gray-600 mb-6">{STEPS[step].body}</p>
-        <div className="flex justify-between">
-          <button onClick={dismiss} className="text-gray-400 underline text-sm">דלג</button>
-          {step < STEPS.length - 1 ? (
-            <button onClick={() => setStep(s => s + 1)} className="bg-blue-600 text-white px-4 py-2 rounded">
-              הבא
+
+        {/* Actions */}
+        <div className="flex items-center justify-between px-6 py-5 border-t border-gray-100">
+          <button onClick={dismiss} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+            דלג
+          </button>
+          <div className="flex gap-2">
+            {step > 0 && (
+              <button
+                onClick={() => setStep(s => s - 1)}
+                className="btn-secondary text-sm px-4 py-2"
+              >
+                הקודם
+              </button>
+            )}
+            <button
+              onClick={isLast ? dismiss : () => setStep(s => s + 1)}
+              className="btn-primary text-sm px-5 py-2"
+            >
+              {isLast ? 'התחל ←' : 'הבא'}
             </button>
-          ) : (
-            <button onClick={dismiss} className="bg-blue-600 text-white px-4 py-2 rounded">
-              התחל
-            </button>
-          )}
+          </div>
         </div>
       </div>
     </div>
