@@ -13,6 +13,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^6.1.0",
+    "@stripe/stripe-js": "^9.1.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.103.0",
     "i18next": "^24.2.3",
