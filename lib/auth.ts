@@ -1,20 +1,21 @@
-import { createServerSupabaseClient } from './supabase/server'
+import { auth } from '@/auth'
 
 export async function getSessionUser() {
-  const supabase = createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
-  return profile
+  const session = await auth()
+  return session?.user ?? null
 }
 
 export async function requireRole(role: 'buyer' | 'seller' | 'admin') {
   const user = await getSessionUser()
-  if (!user || user.role !== role) {
+  if (!user || (user as any).role !== role) {
+    throw new Error('Unauthorized')
+  }
+  return user
+}
+
+export async function requireBusiness() {
+  const user = await getSessionUser()
+  if (!user || !(user as any).is_business) {
     throw new Error('Unauthorized')
   }
   return user
