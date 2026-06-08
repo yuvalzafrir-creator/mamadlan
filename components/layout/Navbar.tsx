@@ -32,6 +32,7 @@ export function Navbar() {
     { href: '/listings',       label: 'מוצרים' },
     { href: '/shelters-guide', label: 'מדריך מיגון' },
     { href: '/how-it-works',   label: 'איך זה עובד?' },
+    { href: '/b2b',            label: 'רכש לארגונים' },
   ]
 
   return (

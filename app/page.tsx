@@ -239,6 +239,18 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── B2B section ── */}
+      <section className="bg-white py-16 px-6 border-t border-gray-100">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-sm font-semibold text-brand-600 mb-2">לחברות ולרשויות</p>
+          <h2 className="section-title mb-4">צריכים לרכוש בכמות גדולה?</h2>
+          <p className="text-gray-600 mb-8 max-w-xl mx-auto">
+            עיריות, מועצות וחברות — נהלו תהליך רכש מסודר עם הצעות מחיר ממוכרים מאומתים.
+          </p>
+          <Link href="/b2b" className="btn-primary inline-flex">למסלול הרכש לארגונים ←</Link>
+        </div>
+      </section>
+
       {/* ── Seller CTA ── */}
       <section className="bg-gradient-to-r from-brand-600 to-brand-700 text-white py-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
