@@ -1,33 +1,32 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { auth } from '@/auth'
+import { NextResponse } from 'next/server'
 
-interface CookieOption {
-  name: string
-  value: string
-  options?: Record<string, unknown>
-}
+export default auth((req) => {
+  const isLoggedIn = !!req.auth
+  const pathname = req.nextUrl.pathname
 
-export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request })
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return request.cookies.getAll() },
-        setAll(cookiesToSet: CookieOption[]) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value)
-            supabaseResponse.cookies.set(name, value, options)
-          })
-        },
-      },
-    }
-  )
-  await supabase.auth.getUser()
-  return supabaseResponse
-}
+  if (!isLoggedIn) {
+    return NextResponse.redirect(new URL('/login', req.url))
+  }
+
+  const role = (req.auth?.user as any)?.role
+
+  if (pathname.startsWith('/admin') && role !== 'admin') {
+    return NextResponse.redirect(new URL('/', req.url))
+  }
+  if (pathname.startsWith('/seller') && role !== 'seller' && role !== 'admin') {
+    return NextResponse.redirect(new URL('/login', req.url))
+  }
+  if (pathname.startsWith('/b2b/requests') && !(req.auth?.user as any)?.is_business) {
+    return NextResponse.redirect(new URL('/b2b', req.url))
+  }
+})
 
 export const config = {
-  matcher: ['/seller/:path*', '/admin/:path*', '/orders/:path*', '/checkout/:path*'],
+  matcher: [
+    '/seller/dashboard/:path*', '/seller/listings/:path*', '/seller/onboarding/:path*',
+    '/seller/verify/:path*', '/seller/b2b/:path*',
+    '/admin/:path*', '/orders/:path*', '/checkout/:path*',
+    '/b2b/requests/:path*',
+  ],
 }
