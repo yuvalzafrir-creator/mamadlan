@@ -1,28 +1,18 @@
 'use client'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useSession, signOut } from 'next-auth/react'
 import { useRouter, usePathname } from 'next/navigation'
 import { LanguageToggle } from './LanguageToggle'
 
 export function Navbar() {
-  const [user, setUser]     = useState<any>(null)
-  const [role, setRole]     = useState<string | null>(null)
+  const { data: session } = useSession()
+  const user = session?.user ?? null
+  const role = (user as any)?.role ?? null
   const [open, setOpen]     = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const supabase = createClient()
   const router   = useRouter()
   const pathname = usePathname()
-
-  useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) return
-      setUser(data.user)
-      const { data: profile } = await supabase
-        .from('profiles').select('role').eq('id', data.user.id).single()
-      setRole(profile?.role ?? null)
-    })
-  }, [])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -30,18 +20,18 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Close mobile menu on navigation
   useEffect(() => { setOpen(false) }, [pathname])
 
   async function logout() {
-    await supabase.auth.signOut()
-    setUser(null); setRole(null)
-    router.push('/'); router.refresh()
+    await signOut({ redirect: false })
+    router.push('/')
+    router.refresh()
   }
 
   const navLinks = [
-    { href: '/listings',     label: 'מוצרים' },
-    { href: '/how-it-works', label: 'איך זה עובד?' },
+    { href: '/listings',       label: 'מוצרים' },
+    { href: '/shelters-guide', label: 'מדריך מיגון' },
+    { href: '/how-it-works',   label: 'איך זה עובד?' },
   ]
 
   return (

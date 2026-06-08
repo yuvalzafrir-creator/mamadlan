@@ -3,17 +3,19 @@ import Link from 'next/link'
 type Listing = {
   id: string
   type: string
-  length_m: number
-  width_m: number
-  height_m: number
+  length_m?: number | null
+  width_m?: number | null
+  height_m?: number | null
   price: number
   location?: string
   shipping_option: string
-  photos?: string[]
-  profiles?: { name: string; verified: boolean; business_name: string }
+  images?: string[]
+  seller_name?: string
+  seller_verified?: boolean
+  seller_business_name?: string
 }
 
-const TYPE_LABELS: Record<string, string> = { mamad: 'ממד', migounit: 'מיגונית', other: 'אחר' }
+const TYPE_LABELS: Record<string, string> = { mamad: 'ממ"ד', migounit: 'מיגונית', other: 'אחר' }
 const TYPE_COLORS: Record<string, string> = {
   mamad:    'bg-brand-600',
   migounit: 'bg-amber-500',
@@ -36,7 +38,9 @@ export function ListingCard({ listing }: { listing: Listing }) {
   const shippingIcon  = SHIPPING_ICONS[listing.shipping_option]  ?? '📦'
   const shippingLabel = SHIPPING_LABELS[listing.shipping_option] ?? ''
   const priceILS      = (listing.price / 100).toLocaleString('he-IL')
-  const dims          = `${listing.length_m}×${listing.width_m}×${listing.height_m} מ'`
+  const dims = (listing.length_m && listing.width_m && listing.height_m)
+    ? `${listing.length_m}×${listing.width_m}×${listing.height_m} מ'`
+    : null
 
   return (
     <Link
@@ -45,9 +49,9 @@ export function ListingCard({ listing }: { listing: Listing }) {
     >
       {/* Image / placeholder */}
       <div className="relative h-48 bg-gradient-to-br from-navy-100 to-brand-100 overflow-hidden">
-        {listing.photos?.[0] ? (
+        {listing.images?.[0] ? (
           <img
-            src={listing.photos[0]}
+            src={listing.images[0]}
             alt={typeLabel}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
@@ -63,7 +67,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
         </div>
 
         {/* Verified badge */}
-        {listing.profiles?.verified && (
+        {listing.seller_verified && (
           <div className="absolute top-3 left-3 badge-verified">
             ✓ מאומת
           </div>
@@ -74,11 +78,11 @@ export function ListingCard({ listing }: { listing: Listing }) {
       <div className="p-4 flex flex-col flex-1 gap-2">
         {/* Seller name */}
         <p className="text-xs text-gray-500 font-medium truncate">
-          {listing.profiles?.business_name ?? listing.profiles?.name ?? ''}
+          {listing.seller_business_name ?? listing.seller_name ?? ''}
         </p>
 
         {/* Dimensions */}
-        <p className="text-sm font-semibold text-navy-700">{dims}</p>
+        {dims && <p className="text-sm font-semibold text-navy-700">{dims}</p>}
 
         {/* Location */}
         {listing.location && (
