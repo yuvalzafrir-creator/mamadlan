@@ -2,6 +2,7 @@ import sql from '@/lib/db'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { RequestQuoteButton } from '@/components/b2b/RequestQuoteButton'
+import { getSessionUser } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -22,6 +23,10 @@ export default async function ListingPage({ params }: { params: { id: string } }
   `
   const listing = rows[0]
   if (!listing) notFound()
+
+  // B2B "request a quote" is for buyers — hide it from the listing's own seller and from admins.
+  const viewer = await getSessionUser()
+  const showRequestQuote = !viewer || ((viewer as any).role !== 'admin' && viewer.id !== listing.seller_id)
 
   const typeLabel = TYPE_LABELS[listing.type] ?? listing.type
   const priceILS  = (listing.price / 100).toLocaleString('he-IL')
@@ -126,7 +131,9 @@ export default async function ListingPage({ params }: { params: { id: string } }
               <Link href={`/checkout/${listing.id}`} className="btn-primary w-full text-base py-3.5 justify-center">
                 לרכישה מאובטחת ←
               </Link>
-              <RequestQuoteButton listingId={listing.id} shelterType={listing.type} location={listing.location} />
+              {showRequestQuote && (
+                <RequestQuoteButton listingId={listing.id} shelterType={listing.type} location={listing.location} />
+              )}
             </div>
           </div>
         </div>
