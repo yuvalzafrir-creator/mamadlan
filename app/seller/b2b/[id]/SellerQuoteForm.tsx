@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-export function SellerQuoteForm({ requestId }: { requestId: string }) {
+export function SellerQuoteForm({ requestId, parentQuoteId }: { requestId: string; parentQuoteId?: string }) {
   const router = useRouter()
   const [error, setError] = useState('')
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -12,6 +12,7 @@ export function SellerQuoteForm({ requestId }: { requestId: string }) {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         request_id: requestId,
+        parent_quote_id: parentQuoteId,
         unit_price: Number(fd.get('unit_price')),
         units: Number(fd.get('units')),
         delivery_terms: fd.get('delivery_terms'),
@@ -25,14 +26,14 @@ export function SellerQuoteForm({ requestId }: { requestId: string }) {
   }
   return (
     <form onSubmit={onSubmit} className="card p-4 space-y-3">
-      <p className="font-bold">הגשת הצעת מחיר</p>
+      <p className="font-bold">{parentQuoteId ? 'מענה להצעה נגדית' : 'הגשת הצעת מחיר'}</p>
       {error && <p className="text-red-600 text-sm">{error}</p>}
       <input name="unit_price" type="number" required placeholder="מחיר ליחידה ₪" className="input w-full" />
       <input name="units" type="number" required defaultValue={1} placeholder="יחידות" className="input w-full" />
       <input name="delivery_terms" placeholder="תנאי אספקה" className="input w-full" />
       <input name="lead_time" placeholder="זמן אספקה" className="input w-full" />
       <textarea name="notes" placeholder="הערות" className="input w-full" rows={2} />
-      <button type="submit" className="btn-primary w-full">שלח הצעה</button>
+      <button type="submit" className="btn-primary w-full">{parentQuoteId ? 'שלח מענה' : 'שלח הצעה'}</button>
     </form>
   )
 }

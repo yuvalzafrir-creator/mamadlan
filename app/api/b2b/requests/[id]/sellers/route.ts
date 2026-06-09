@@ -18,7 +18,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   // advance request to quoting if still earlier
   await sql`
     UPDATE b2b_requests SET status = 'quoting', updated_at = NOW()
-    WHERE id = ${params.id} AND status IN ('sourcing', 'qualifying')
+    WHERE id = ${params.id} AND status IN ('new', 'qualifying', 'sourcing')
   `
   const rows = await sql`
     SELECT rs.*, u.business_name, u.name

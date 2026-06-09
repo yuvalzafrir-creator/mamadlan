@@ -47,8 +47,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   const updated = await sql`
     UPDATE b2b_requests SET
       status = ${body.status ?? rows[0].status},
-      deal_value = ${body.deal_value ?? null},
-      commission_amount = ${body.commission_amount ?? null},
+      deal_value = COALESCE(${body.deal_value ?? null}, deal_value),
+      commission_amount = COALESCE(${body.commission_amount ?? null}, commission_amount),
       updated_at = NOW()
     WHERE id = ${params.id}
     RETURNING *

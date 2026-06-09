@@ -32,6 +32,9 @@ export default async function SellerB2BDetail({ params }: { params: { id: string
           <div key={q.id} className="card p-3 mb-2 text-sm">
             ₪{q.unit_price.toLocaleString()} × {q.units} — {q.status}
             {q.countered_by === 'buyer' && q.status === 'submitted' && <span className="text-amber-600"> (הצעה נגדית מהקונה — נדרש מענה)</span>}
+            {!closed && q.countered_by === 'buyer' && q.status === 'submitted' && (
+              <div className="mt-3"><SellerQuoteForm requestId={params.id} parentQuoteId={q.id} /></div>
+            )}
           </div>
         ))}
         {!closed && <SellerQuoteForm requestId={params.id} />}

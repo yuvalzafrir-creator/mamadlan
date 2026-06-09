@@ -1,5 +1,6 @@
 import { getSessionUser } from '@/lib/auth'
 import { anonymizeQuote } from '@/lib/b2b/anonymize'
+import { sellerAlias } from '@/lib/b2b/alias'
 import { QuoteThread } from '@/components/b2b/QuoteThread'
 import { BuyerQuoteActions } from './BuyerQuoteActions'
 import sql from '@/lib/db'
@@ -24,7 +25,7 @@ export default async function BuyerRequestDetail({ params }: { params: { id: str
     ORDER BY q.created_at DESC
   `
   const quotes = quoteRows.map((q: any) => ({
-    ...anonymizeQuote({ ...q, alias: `ספק ${q.idx + 1}` }),
+    ...anonymizeQuote({ ...q, alias: sellerAlias(q.idx) }),
   }))
 
   return (
