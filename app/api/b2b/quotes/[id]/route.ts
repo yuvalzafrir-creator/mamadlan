@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionUser } from '@/lib/auth'
 import { canTransitionQuote } from '@/lib/b2b/state'
+import { anonymizeQuote } from '@/lib/b2b/anonymize'
 import type { QuoteStatus } from '@/lib/b2b/types'
 import sql from '@/lib/db'
+
+const CLOSED_STATUSES = ['closed_won', 'closed_lost', 'cancelled']
 
 // action: 'approve' | 'reject' (admin); 'accept' | 'reject' | 'counter' (buyer)
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
@@ -22,6 +25,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     if (!canTransitionQuote(from, to)) {
       return NextResponse.json({ error: `Illegal transition ${from} -> ${to}` }, { status: 400 })
     }
+    if (to === 'approved') {
+      const r = await sql`SELECT status FROM b2b_requests WHERE id = ${quote.request_id} LIMIT 1`
+      if (!r[0] || CLOSED_STATUSES.includes(r[0].status)) {
+        return NextResponse.json({ error: 'Request is closed' }, { status: 400 })
+      }
+    }
     const upd = await sql`UPDATE b2b_quotes SET status = ${to}, updated_at = NOW() WHERE id = ${params.id} RETURNING *`
     if (to === 'approved') {
       await sql`UPDATE b2b_requests SET status = 'presented', updated_at = NOW() WHERE id = ${quote.request_id} AND status = 'quoting'`
@@ -38,7 +47,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       return NextResponse.json({ error: 'Illegal transition' }, { status: 400 })
     }
     const upd = await sql`UPDATE b2b_quotes SET status = 'rejected', updated_at = NOW() WHERE id = ${params.id} RETURNING *`
-    return NextResponse.json(upd[0])
+    return NextResponse.json(anonymizeQuote(upd[0]))
   }
 
   if (isBuyer && body.action === 'accept') {
@@ -51,7 +60,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       UPDATE b2b_quotes SET status = 'rejected', updated_at = NOW()
       WHERE request_id = ${quote.request_id} AND id <> ${params.id} AND status = 'approved'
     `
-    return NextResponse.json(upd[0])
+    return NextResponse.json(anonymizeQuote(upd[0]))
   }
 
   if (isBuyer && body.action === 'counter') {
@@ -73,7 +82,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         'submitted', ${params.id}, 'buyer'
       ) RETURNING *
     `
-    return NextResponse.json(child[0], { status: 201 })
+    return NextResponse.json(anonymizeQuote(child[0]), { status: 201 })
   }
 
   return NextResponse.json({ error: 'Forbidden' }, { status: 403 })

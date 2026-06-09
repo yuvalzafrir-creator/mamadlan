@@ -40,6 +40,10 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const role = (user as any).role
   const sender = await resolveSender(params.id, user.id!, role)
   if (!sender) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  const reqRows = await sql`SELECT status FROM b2b_requests WHERE id = ${params.id} LIMIT 1`
+  if (!reqRows[0] || ['closed_won', 'closed_lost', 'cancelled'].includes(reqRows[0].status)) {
+    return NextResponse.json({ error: 'Request is closed' }, { status: 400 })
+  }
   const body = await req.json() as { body: string }
   if (!body.body?.trim()) return NextResponse.json({ error: 'body is required' }, { status: 400 })
 
