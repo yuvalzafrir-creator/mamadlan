@@ -53,7 +53,7 @@ Whole-branch review (`92511c5..434b661`) found the authorization model sound and
 - **I2** `COALESCE` on `deal_value`/`commission_amount` so a status-only PATCH can't wipe a recorded deal.
 - **I3** shortlisting now advances a still-`new` request to `quoting`.
 
-Deferred minors (safe follow-ups): block messages on closed/cancelled requests (M1); hide the listing "request a quote" CTA from the listing's own seller/admins (M2); skip quote approval on cancelled requests (M3).
+Minors: **M1 fixed** (messages blocked on closed/cancelled requests) and **M3 fixed** (quote approval blocked on closed/cancelled requests) in `b3a7fc2`, along with anonymizing buyer quote-action responses (the `seller_id` follow-up found during smoke). **M2 still deferred** (hide the listing "request a quote" CTA from the listing's own seller/admins — cosmetic; would add session logic to the listing page).
 
 ## Verification results
 - `npm run build`: ✅ compiles; all B2B routes registered.
