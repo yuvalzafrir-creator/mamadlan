@@ -59,7 +59,13 @@ Deferred minors (safe follow-ups): block messages on closed/cancelled requests (
 - `npm run build`: ✅ compiles; all B2B routes registered.
 - B2B unit tests: ✅ 31/31 pass.
 - Repo-wide `npm test`: 2 failures in `__tests__/api/listings.test.ts` — **pre-existing, unrelated** (the working-tree `lib/listings.ts` dropped its dimensions check before this session; B2B never touched that file). Also surfaces duplicated from a stale leftover worktree at `.claude/worktrees/mystifying-kare-e260a9/`.
-- Manual browser smoke (plan Task 21 Step 3): **not run** — it writes test rows and `DATABASE_URL` points at production Neon. Awaiting user go-ahead.
+- Manual full smoke (plan Task 21 Step 3): ✅ **run end-to-end on 2026-06-09** against the dev server (which uses the production Neon DB). Verified: buyer creates request → admin shortlist advances `new→quoting` (I3) → seller sees specs but **zero buyer PII** → seller quote → admin approve advances `quoting→presented` → buyer counter creates a linked child quote → seller counter-response links via `parent_quote_id` (I1) → thread + quote list both show alias `ספק א׳` consistently (C1) with no seller name/email exposed to buyer (screenshot captured). **All test rows deleted afterward; 0 B2B rows remain in the DB**; buyer `is_business` reset to FALSE.
+
+### Minor follow-up observed during smoke (not blocking)
+- The buyer's quote action responses (`PATCH /api/b2b/quotes/[id]` for accept/reject/counter) return the raw quote row including `seller_id` (an opaque UUID — no name/phone/email). The buyer UI ignores the response body, so nothing is displayed, but for defense-in-depth these responses could be passed through `anonymizeQuote` too. Low severity; safe follow-up alongside M1–M3.
+
+### Test-account note
+- `buyer@test.co.il` password was set to `buyer123` for the smoke (it had no known password before). Admin `yuvalzafrir@gmail.com`/`admin123`, seller `seller@test.co.il`/`seller123` (verified) unchanged.
 
 ---
 
