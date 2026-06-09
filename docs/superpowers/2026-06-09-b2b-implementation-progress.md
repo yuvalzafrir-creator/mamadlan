@@ -2,7 +2,7 @@
 
 **Date:** 2026-06-09
 **Branch:** `feat/b2b-marketplace-engagement`
-**Status:** 16 of 21 tasks complete and committed. Tasks 17–21 remaining.
+**Status:** ✅ All 21 tasks complete + whole-branch code review done + merge-blocking fixes applied. Ready to finish (merge/PR). Automated verification green; manual browser smoke against the production DB still pending user go-ahead.
 
 ## Reference documents
 - **Design spec:** [docs/superpowers/specs/2026-06-08-b2b-marketplace-engagement-design.md](specs/2026-06-08-b2b-marketplace-engagement-design.md)
@@ -36,13 +36,30 @@ Subagent-Driven Development (superpowers): per task, a fresh implementer subagen
 | 14 | Messages API (anonymized) | ✅ Done | `88204f3` |
 | 15 | Middleware route protection | ✅ Done | `05d03f0` |
 | 16 | Public landing + homepage section + nav link | ✅ Done | `ef317e3` |
-| 17 | Sourcing form (`app/b2b/request/page.tsx`) | ⏳ TODO | — |
-| 18 | Buyer portal (list/detail + QuoteThread + actions) | ⏳ TODO | — |
-| 19 | Admin console (queue/detail + actions + dashboard link) | ⏳ TODO | — |
-| 20 | Seller views + listing CTA + counter-offer UI | ⏳ TODO | — |
-| 21 | Full test run + manual smoke | ⏳ TODO | — |
+| 17 | Sourcing form (`app/b2b/request/page.tsx`) | ✅ Done | `c8a5438` |
+| 18 | Buyer portal (list/detail + QuoteThread + actions) | ✅ Done | `351b576` |
+| 19 | Admin console (queue/detail + actions + dashboard link) | ✅ Done | `7c176e8` |
+| 20 | Seller views + listing CTA + counter-offer UI | ✅ Done | `434b661` |
+| 21 | Verification (build + unit tests) | ✅ Done | — |
+| — | Final whole-branch code review (opus) | ✅ Done | — |
+| — | Review fixes (C1, I1, I2, I3) | ✅ Done | `6ce0999` |
 
-`HEAD` is currently at `ef317e3`.
+`HEAD` is currently at `6ce0999`.
+
+## Final review outcome
+Whole-branch review (`92511c5..434b661`) found the authorization model sound and PII anonymization holding end-to-end (no raw name/phone/email/user-id leaks on any buyer- or seller-reachable endpoint). Four merge-blockers were fixed in `6ce0999`:
+- **C1** buyer quote list now uses the shared `sellerAlias()` so labels match the thread.
+- **I1** seller counter-response passes `parent_quote_id`, keeping the quote chain linked.
+- **I2** `COALESCE` on `deal_value`/`commission_amount` so a status-only PATCH can't wipe a recorded deal.
+- **I3** shortlisting now advances a still-`new` request to `quoting`.
+
+Deferred minors (safe follow-ups): block messages on closed/cancelled requests (M1); hide the listing "request a quote" CTA from the listing's own seller/admins (M2); skip quote approval on cancelled requests (M3).
+
+## Verification results
+- `npm run build`: ✅ compiles; all B2B routes registered.
+- B2B unit tests: ✅ 31/31 pass.
+- Repo-wide `npm test`: 2 failures in `__tests__/api/listings.test.ts` — **pre-existing, unrelated** (the working-tree `lib/listings.ts` dropped its dimensions check before this session; B2B never touched that file). Also surfaces duplicated from a stale leftover worktree at `.claude/worktrees/mystifying-kare-e260a9/`.
+- Manual browser smoke (plan Task 21 Step 3): **not run** — it writes test rows and `DATABASE_URL` points at production Neon. Awaiting user go-ahead.
 
 ---
 
