@@ -37,6 +37,21 @@ describe('canTransitionRequest', () => {
   it('forbids closed_won -> seller_confirmed', () => {
     expect(canTransitionRequest('closed_won', 'seller_confirmed')).toBe(false)
   })
+  it('allows seller_confirmed -> pending_admin', () => {
+    expect(canTransitionRequest('seller_confirmed', 'pending_admin')).toBe(true)
+  })
+  it('allows pending_admin -> closed_won', () => {
+    expect(canTransitionRequest('pending_admin', 'closed_won')).toBe(true)
+  })
+  it('allows pending_admin -> closed_lost', () => {
+    expect(canTransitionRequest('pending_admin', 'closed_lost')).toBe(true)
+  })
+  it('forbids new -> pending_admin (must pass seller confirmation)', () => {
+    expect(canTransitionRequest('new', 'pending_admin')).toBe(false)
+  })
+  it('forbids pending_admin -> seller_confirmed (no going back)', () => {
+    expect(canTransitionRequest('pending_admin', 'seller_confirmed')).toBe(false)
+  })
 })
 
 describe('canTransitionQuote', () => {

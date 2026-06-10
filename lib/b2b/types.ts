@@ -4,7 +4,7 @@ export type ShelterType = 'mamad' | 'migounit' | 'other' | 'any'
 
 export type RequestStatus =
   | 'new' | 'qualifying' | 'sourcing' | 'quoting'
-  | 'presented' | 'seller_confirmed' | 'seller_declined'
+  | 'presented' | 'seller_confirmed' | 'seller_declined' | 'pending_admin'
   | 'closed_won' | 'closed_lost' | 'cancelled'
 
 export type QuoteStatus =
