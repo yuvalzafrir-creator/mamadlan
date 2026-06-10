@@ -8,6 +8,7 @@ export function RequestQuoteButton({ listingId, shelterType, location }: {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
+  const [wantsShipping, setWantsShipping] = useState(false)
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -25,6 +26,8 @@ export function RequestQuoteButton({ listingId, shelterType, location }: {
         quantity: Number(fd.get('quantity')),
         target_date: fd.get('target_date') || null,
         description: fd.get('description'),
+        wants_shipping: wantsShipping,
+        delivery_address: fd.get('delivery_address') || null,
       }),
     })
     if (res.status === 401) { router.push(`/login?next=/listings/${listingId}`); return }
@@ -43,6 +46,13 @@ export function RequestQuoteButton({ listingId, shelterType, location }: {
       <input name="contact_name" required placeholder="איש קשר" className="input w-full" />
       <input name="contact_phone" placeholder="טלפון" className="input w-full" />
       <input name="quantity" type="number" min="1" required placeholder="כמות" className="input w-full" />
+      <label className="flex items-center gap-2 text-sm">
+        <input type="checkbox" checked={wantsShipping} onChange={e => setWantsShipping(e.target.checked)} />
+        כולל משלוח
+      </label>
+      {wantsShipping && (
+        <input name="delivery_address" required placeholder="כתובת למשלוח" className="input w-full" />
+      )}
       <input name="target_date" type="date" className="input w-full" />
       <textarea name="description" placeholder="פירוט" className="input w-full" rows={2} />
       <button type="submit" className="btn-primary w-full">שליחה</button>
