@@ -1,6 +1,7 @@
 import { getSessionUser } from '@/lib/auth'
 import { QuoteThread } from '@/components/b2b/QuoteThread'
 import { SellerQuoteForm } from './SellerQuoteForm'
+import { SellerConfirmActions } from './SellerConfirmActions'
 import sql from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
@@ -8,10 +9,16 @@ export const dynamic = 'force-dynamic'
 export default async function SellerB2BDetail({ params }: { params: { id: string } }) {
   const user = await getSessionUser()
   if (!user) return <main dir="rtl" className="p-12">יש להתחבר</main>
-  const invited = await sql`SELECT 1 FROM b2b_request_sellers WHERE request_id = ${params.id} AND seller_id = ${user.id!} LIMIT 1`
-  if (invited.length === 0) return <main dir="rtl" className="p-12">אין גישה</main>
+  const access = await sql`
+    SELECT
+      (SELECT COUNT(*) FROM b2b_request_sellers WHERE request_id = ${params.id} AND seller_id = ${user.id!}) AS invited,
+      (SELECT COUNT(*) FROM b2b_requests WHERE id = ${params.id} AND seller_id = ${user.id!}) AS owns
+  `
+  if (Number(access[0].invited) === 0 && Number(access[0].owns) === 0) {
+    return <main dir="rtl" className="p-12">אין גישה</main>
+  }
 
-  const reqRows = await sql`SELECT id, shelter_type, quantity, location, target_date, description, status FROM b2b_requests WHERE id = ${params.id} LIMIT 1`
+  const reqRows = await sql`SELECT id, shelter_type, quantity, location, target_date, description, status, seller_id, wants_shipping, delivery_address FROM b2b_requests WHERE id = ${params.id} LIMIT 1`
   const request = reqRows[0]
   const myQuotes = await sql`
     SELECT * FROM b2b_quotes WHERE request_id = ${params.id} AND seller_id = ${user.id!} ORDER BY created_at DESC
@@ -25,6 +32,17 @@ export default async function SellerB2BDetail({ params }: { params: { id: string
         <p className="text-gray-600">כמות: {request.quantity ?? '—'} · אזור: {request.location ?? '—'}</p>
         {request.description && <p className="text-gray-700 mt-2">{request.description}</p>}
       </div>
+
+      {request.seller_id === user.id && (
+        <section className="space-y-3">
+          {request.wants_shipping && (
+            <p className="text-sm text-gray-600">הקונה ביקש משלוח{request.delivery_address ? ` אל: ${request.delivery_address}` : ''}</p>
+          )}
+          {request.status === 'new'
+            ? <SellerConfirmActions requestId={params.id} />
+            : <p className="text-sm font-semibold text-navy-900">סטטוס אישור: {request.status}</p>}
+        </section>
+      )}
 
       <section>
         <h2 className="section-title mb-3">ההצעות שלי</h2>
