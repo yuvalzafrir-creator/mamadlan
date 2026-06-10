@@ -15,11 +15,16 @@ export async function POST(request: NextRequest) {
   }
   // Ensure the user is flagged as a business buyer.
   await sql`UPDATE users SET is_business = TRUE WHERE id = ${user.id!} AND is_business = FALSE`
+  let sellerId: string | null = null
+  if (body.listing_id) {
+    const lrows = await sql`SELECT seller_id FROM listings WHERE id = ${body.listing_id} LIMIT 1`
+    sellerId = lrows[0]?.seller_id ?? null
+  }
   const rows = await sql`
     INSERT INTO b2b_requests (
       buyer_id, listing_id, org_name, org_type, contact_name, contact_phone,
       contact_email, need_type, shelter_type, quantity, location, target_date,
-      budget_note, description, status
+      budget_note, description, seller_id, wants_shipping, delivery_address, status
     ) VALUES (
       ${user.id!},
       ${body.listing_id ?? null},
@@ -35,6 +40,9 @@ export async function POST(request: NextRequest) {
       ${body.target_date ?? null},
       ${body.budget_note ?? null},
       ${body.description ?? null},
+      ${sellerId},
+      ${body.wants_shipping ?? false},
+      ${body.delivery_address ?? null},
       'new'
     ) RETURNING *
   `

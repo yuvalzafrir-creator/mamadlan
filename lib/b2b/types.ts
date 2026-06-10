@@ -26,6 +26,8 @@ export type RequestInput = {
   target_date?: string | null
   budget_note?: string
   description?: string
+  wants_shipping?: boolean
+  delivery_address?: string
 }
 
 export type QuoteInput = {
