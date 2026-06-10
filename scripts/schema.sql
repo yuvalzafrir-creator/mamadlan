@@ -144,3 +144,9 @@ ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS seller_id UUID REFERENCES user
 ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS wants_shipping BOOLEAN DEFAULT FALSE;
 ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS delivery_address TEXT;
 ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS shipping_amount INTEGER;
+
+-- B2B v3: seller shipping pricing + contract agreements
+ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS seller_shipping_price INTEGER;
+ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS shipping_proposal_requested BOOLEAN DEFAULT FALSE;
+ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS buyer_agreed_at TIMESTAMPTZ;
+ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS seller_agreed_at TIMESTAMPTZ;

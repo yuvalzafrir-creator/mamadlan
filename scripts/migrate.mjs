@@ -82,4 +82,9 @@ await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS wants_shipping BOOLE
 await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS delivery_address TEXT`
 await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS shipping_amount INTEGER`
 
+await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS seller_shipping_price INTEGER`
+await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS shipping_proposal_requested BOOLEAN DEFAULT FALSE`
+await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS buyer_agreed_at TIMESTAMPTZ`
+await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS seller_agreed_at TIMESTAMPTZ`
+
 console.log('Migration complete')
