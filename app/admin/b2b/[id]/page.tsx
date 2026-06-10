@@ -26,6 +26,10 @@ export default async function AdminB2BDetail({ params }: { params: { id: string 
         <p className="text-gray-600">{request.contact_name} · {request.contact_phone} · {request.contact_email}</p>
         <p className="text-gray-600">סוג: {request.shelter_type} · כמות: {request.quantity ?? '—'} · אזור: {request.location ?? '—'}</p>
         <p className="text-gray-600">צורך: {(request.need_type ?? []).join(', ')}</p>
+        {request.wants_shipping && (
+          <p className="text-gray-600">משלוח התבקש{request.delivery_address ? ` — ${request.delivery_address}` : ''}</p>
+        )}
+        <p className="text-gray-600">סטטוס: {request.status}</p>
         {request.description && <p className="text-gray-700 mt-2">{request.description}</p>}
       </div>
 

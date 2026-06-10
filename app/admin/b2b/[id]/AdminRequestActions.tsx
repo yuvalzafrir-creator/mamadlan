@@ -12,6 +12,7 @@ export function AdminRequestActions({ requestId, status, sellers, shortlisted, q
   const [picked, setPicked] = useState<string[]>([])
   const [dealValue, setDealValue] = useState('')
   const [commission, setCommission] = useState('')
+  const [shipping, setShipping] = useState('')
 
   async function patchStatus(newStatus: string) {
     const res = await fetch(`/api/b2b/requests/${requestId}`, {
@@ -41,6 +42,7 @@ export function AdminRequestActions({ requestId, status, sellers, shortlisted, q
         status: won ? 'closed_won' : 'closed_lost',
         deal_value: won ? Number(dealValue) : null,
         commission_amount: won ? Number(commission) : null,
+        shipping_amount: won ? Number(shipping) : null,
       }),
     })
     if (res.ok) router.refresh()
@@ -94,6 +96,7 @@ export function AdminRequestActions({ requestId, status, sellers, shortlisted, q
         <p className="font-bold mb-2">סגירת עסקה</p>
         <input value={dealValue} onChange={e => setDealValue(e.target.value)} placeholder="שווי עסקה ₪" className="input w-full mb-2" />
         <input value={commission} onChange={e => setCommission(e.target.value)} placeholder="עמלה ₪" className="input w-full mb-2" />
+        <input value={shipping} onChange={e => setShipping(e.target.value)} placeholder="עלות משלוח / שירותים ₪" className="input w-full mb-2" />
         <div className="flex gap-2">
           <button onClick={() => close(true)} className="btn-primary text-sm">סגור כעסקה (won)</button>
           <button onClick={() => close(false)} className="btn-secondary text-sm">סגור ללא עסקה</button>
