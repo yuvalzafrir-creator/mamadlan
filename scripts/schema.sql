@@ -138,3 +138,9 @@ CREATE TABLE IF NOT EXISTS b2b_messages (
   body TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- B2B listing-first additions
+ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS seller_id UUID REFERENCES users(id);
+ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS wants_shipping BOOLEAN DEFAULT FALSE;
+ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS delivery_address TEXT;
+ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS shipping_amount INTEGER;

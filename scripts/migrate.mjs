@@ -77,4 +77,9 @@ await sql`CREATE TABLE IF NOT EXISTS b2b_messages (
   created_at TIMESTAMPTZ DEFAULT NOW()
 )`
 
+await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS seller_id UUID REFERENCES users(id)`
+await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS wants_shipping BOOLEAN DEFAULT FALSE`
+await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS delivery_address TEXT`
+await sql`ALTER TABLE b2b_requests ADD COLUMN IF NOT EXISTS shipping_amount INTEGER`
+
 console.log('Migration complete')
