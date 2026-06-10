@@ -1,12 +1,11 @@
 'use client'
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function LoginPage() {
-  const supabase = createClient()
-  const router   = useRouter()
+  const router = useRouter()
   const [email, setEmail]     = useState('')
   const [password, setPassword] = useState('')
   const [error, setError]     = useState('')
@@ -16,8 +15,16 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password })
-    if (err) { setError(err.message); setLoading(false); return }
+    const result = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
+    if (result?.error) {
+      setError('אימייל או סיסמה שגויים')
+      setLoading(false)
+      return
+    }
     router.push('/')
     router.refresh()
   }
@@ -78,11 +85,15 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-gray-100 text-center text-sm text-gray-500">
-            מוכר חדש?{' '}
-            <Link href="/seller/register" className="text-brand-600 font-semibold hover:underline">
-              הרשמה כמוכר
-            </Link>
+          <div className="mt-6 pt-5 border-t border-gray-100 text-center text-sm text-gray-500 space-y-2">
+            <p>
+              אין לך חשבון?{' '}
+              <Link href="/register" className="text-brand-600 font-semibold hover:underline">הרשמה</Link>
+            </p>
+            <p>
+              מוכר חדש?{' '}
+              <Link href="/seller/register" className="text-brand-600 font-semibold hover:underline">הרשמה כמוכר</Link>
+            </p>
           </div>
         </div>
       </div>

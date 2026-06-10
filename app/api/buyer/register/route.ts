@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 import sql from '@/lib/db'
 
 export async function POST(request: NextRequest) {
-  const { email, password, name, phone } = await request.json()
+  const { email, password, name, phone, is_business, org_name, org_type, contact_name } = await request.json()
   if (!email || !password) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
@@ -15,8 +15,9 @@ export async function POST(request: NextRequest) {
 
   const password_hash = await bcrypt.hash(password, 12)
   await sql`
-    INSERT INTO users (email, password_hash, role, name, phone)
-    VALUES (${email}, ${password_hash}, 'buyer', ${name ?? null}, ${phone ?? null})
+    INSERT INTO users (email, password_hash, role, name, phone, is_business, business_name, org_type, contact_name)
+    VALUES (${email}, ${password_hash}, 'buyer', ${name ?? null}, ${phone ?? null},
+            ${is_business ?? false}, ${org_name ?? null}, ${org_type ?? null}, ${contact_name ?? null})
   `
 
   return NextResponse.json({ success: true }, { status: 201 })
