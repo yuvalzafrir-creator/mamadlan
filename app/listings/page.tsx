@@ -10,7 +10,12 @@ export default async function ListingsPage({
 }: {
   searchParams: Record<string, string>
 }) {
-  const { type, minPrice, maxPrice, location, shipping } = searchParams
+  const { type, minPrice, maxPrice, location, shipping, q, minArea, maxArea, condition, sort } = searchParams
+
+  const orderBy =
+    sort === 'price_asc'  ? sql`ORDER BY l.price ASC`
+  : sort === 'price_desc' ? sql`ORDER BY l.price DESC`
+  : sql`ORDER BY l.created_at DESC`
 
   const listings = await sql`
     SELECT l.*, u.name as seller_name, u.verified as seller_verified, u.business_name as seller_business_name
@@ -21,10 +26,14 @@ export default async function ListingsPage({
     ${maxPrice ? sql`AND l.price <= ${parseInt(maxPrice) * 100}` : sql``}
     ${location ? sql`AND l.location ILIKE ${'%' + location + '%'}` : sql``}
     ${shipping ? sql`AND l.shipping_option = ${shipping}` : sql``}
-    ORDER BY l.created_at DESC
+    ${q ? sql`AND (l.title ILIKE ${'%' + q + '%'} OR l.description ILIKE ${'%' + q + '%'} OR l.location ILIKE ${'%' + q + '%'})` : sql``}
+    ${minArea ? sql`AND l.area >= ${parseInt(minArea)}` : sql``}
+    ${maxArea ? sql`AND l.area <= ${parseInt(maxArea)}` : sql``}
+    ${condition ? sql`AND l.condition = ${condition}` : sql``}
+    ${orderBy}
   `
 
-  const activeFilters = ['type', 'minPrice', 'maxPrice', 'location', 'shipping'].filter(k => searchParams[k])
+  const activeFilters = ['type', 'minPrice', 'maxPrice', 'location', 'shipping', 'q', 'minArea', 'maxArea', 'condition'].filter(k => searchParams[k])
 
   return (
     <main dir="rtl">
@@ -46,6 +55,11 @@ export default async function ListingsPage({
                     נקה ({activeFilters.length})
                   </Link>
                 )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5">חיפוש חופשי</label>
+                <input name="q" placeholder="חפש לפי כותרת, תיאור, אזור..." defaultValue={q ?? ''} className="input text-sm" />
               </div>
 
               <div>
@@ -72,12 +86,39 @@ export default async function ListingsPage({
               </div>
 
               <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5">שטח (מ&quot;ר)</label>
+                <div className="flex gap-2">
+                  <input name="minArea" placeholder="מינ'" type="number" defaultValue={minArea ?? ''} className="input text-sm w-full" />
+                  <input name="maxArea" placeholder="מקס'" type="number" defaultValue={maxArea ?? ''} className="input text-sm w-full" />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5">מצב</label>
+                <select name="condition" defaultValue={condition ?? ''} className="select text-sm">
+                  <option value="">כל המצבים</option>
+                  <option value="new">חדש</option>
+                  <option value="used">משומש</option>
+                  <option value="refurbished">משופץ</option>
+                </select>
+              </div>
+
+              <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1.5">סוג משלוח</label>
                 <select name="shipping" defaultValue={shipping ?? ''} className="select text-sm">
                   <option value="">כל סוגי המשלוח</option>
                   <option value="seller_ships">משלוח מהמוכר</option>
                   <option value="platform_ships">משלוח דרך האתר</option>
                   <option value="pickup_only">איסוף עצמי</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5">מיון</label>
+                <select name="sort" defaultValue={sort ?? 'newest'} className="select text-sm">
+                  <option value="newest">החדשים ביותר</option>
+                  <option value="price_asc">מחיר: מהנמוך לגבוה</option>
+                  <option value="price_desc">מחיר: מהגבוה לנמוך</option>
                 </select>
               </div>
 
