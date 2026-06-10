@@ -69,6 +69,28 @@ Minors: **M1 fixed** (messages blocked on closed/cancelled requests) and **M3 fi
 
 ---
 
+## Phase 2 — listing-first flow + rich search (additive, 2026-06-10)
+
+Spec: [specs/2026-06-10-b2b-listing-first-additive-design.md](specs/2026-06-10-b2b-listing-first-additive-design.md). **Additive only — nothing from Phase 1 removed.** Both flows now coexist so the owner can decide later what to keep.
+
+New listing-first flow: buyer browses/searches the catalog → opens a listing → **"request to buy"** (fills quantity, **shipping + delivery address**, contact) → the listing's **seller confirms availability** (or declines) → **admin closes**, pricing shipping and recording commission. Plus Yad2-style **rich search & filters** on `/listings` (free-text, area, condition, sort).
+
+| Task | Status | Commit |
+|---|---|---|
+| P2-A additive migration (seller_id, wants_shipping, delivery_address, shipping_amount) | ✅ | `ed2b6a2` |
+| P2-B state machine (+seller_confirmed/seller_declined, TDD) | ✅ | `4ea55e7` |
+| P2-C create API stores seller_id + shipping | ✅ | `9da975c` |
+| P2-D seller confirm/decline + listing-seller read + admin shipping_amount | ✅ | `1245716` |
+| P2-E shipping fields on listing request form | ✅ | `09b3a5d` |
+| P2-F seller view: own-listing requests + confirm UI | ✅ | `8462e09` |
+| P2-G admin: shipping at close + confirmation display | ✅ | `8bf7219` |
+| P2-H rich search & filters on /listings | ✅ | `78c770f` |
+| P2-I verification | ✅ | — |
+
+**Verification:** 37/37 B2B unit tests pass (+6 new state tests); build green; full listing-first smoke passed live (request → `seller_id` auto-set + shipping stored → seller confirm → `seller_confirmed` → admin close `closed_won` with deal_value+commission+shipping_amount); search/filters confirmed (q/condition no-match → 0, sort preserves count). Test data deleted afterward (0 B2B rows remain).
+
+---
+
 ## Files created so far
 
 **Pure logic (unit-tested):** `lib/b2b/types.ts`, `lib/b2b/validation.ts`, `lib/b2b/state.ts`, `lib/b2b/alias.ts`, `lib/b2b/anonymize.ts`
