@@ -1,11 +1,13 @@
 import type { RequestStatus, QuoteStatus } from './types'
 
 const REQUEST_TRANSITIONS: Record<RequestStatus, RequestStatus[]> = {
-  new: ['qualifying', 'cancelled'],
+  new: ['qualifying', 'sourcing', 'quoting', 'seller_confirmed', 'seller_declined', 'cancelled'],
   qualifying: ['sourcing', 'cancelled'],
   sourcing: ['quoting', 'cancelled'],
   quoting: ['presented', 'cancelled'],
   presented: ['closed_won', 'closed_lost', 'cancelled'],
+  seller_confirmed: ['closed_won', 'closed_lost', 'cancelled'],
+  seller_declined: ['closed_lost', 'cancelled'],
   closed_won: [],
   closed_lost: [],
   cancelled: [],
