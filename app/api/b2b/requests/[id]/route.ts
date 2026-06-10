@@ -14,31 +14,49 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
   if (role === 'admin') return NextResponse.json(reqRow)
   if (reqRow.buyer_id === user.id) return NextResponse.json(reqRow)
-  // sellers: only if invited
-  const invited = await sql`
-    SELECT 1 FROM b2b_request_sellers
-    WHERE request_id = ${params.id} AND seller_id = ${user.id!} LIMIT 1
-  `
-  if (role === 'seller' && invited.length > 0) {
-    // strip buyer PII for sellers
-    const { contact_name, contact_phone, contact_email, org_name, ...safe } = reqRow
-    void contact_name; void contact_phone; void contact_email; void org_name
-    return NextResponse.json(safe)
+  if (role === 'seller') {
+    const invited = await sql`
+      SELECT 1 FROM b2b_request_sellers
+      WHERE request_id = ${params.id} AND seller_id = ${user.id!} LIMIT 1
+    `
+    const isListingSeller = reqRow.seller_id === user.id
+    if (invited.length > 0 || isListingSeller) {
+      // strip buyer PII for sellers
+      const { contact_name, contact_phone, contact_email, org_name, ...safe } = reqRow
+      void contact_name; void contact_phone; void contact_email; void org_name
+      return NextResponse.json(safe)
+    }
   }
   return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   const user = await getSessionUser()
-  if (!user || (user as any).role !== 'admin') {
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const role = (user as any).role
+  const body = await req.json()
+
+  const rows = await sql`SELECT status, seller_id FROM b2b_requests WHERE id = ${params.id} LIMIT 1`
+  if (!rows[0]) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  const from = rows[0].status as RequestStatus
+
+  // Seller path: the listing's own seller confirms or declines a listing-first request.
+  if (role === 'seller' && rows[0].seller_id === user.id && (body.action === 'confirm' || body.action === 'decline')) {
+    const to: RequestStatus = body.action === 'confirm' ? 'seller_confirmed' : 'seller_declined'
+    if (!canTransitionRequest(from, to)) {
+      return NextResponse.json({ error: `Illegal transition ${from} -> ${to}` }, { status: 400 })
+    }
+    const upd = await sql`
+      UPDATE b2b_requests SET status = ${to}, updated_at = NOW() WHERE id = ${params.id} RETURNING *
+    `
+    return NextResponse.json(upd[0])
+  }
+
+  // Admin path: status changes + close (deal_value, commission, shipping).
+  if (role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  const body = await req.json()
-  const rows = await sql`SELECT status FROM b2b_requests WHERE id = ${params.id} LIMIT 1`
-  if (!rows[0]) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-
   if (body.status) {
-    const from = rows[0].status as RequestStatus
     const to = body.status as RequestStatus
     if (!canTransitionRequest(from, to)) {
       return NextResponse.json({ error: `Illegal transition ${from} -> ${to}` }, { status: 400 })
@@ -49,6 +67,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       status = ${body.status ?? rows[0].status},
       deal_value = COALESCE(${body.deal_value ?? null}, deal_value),
       commission_amount = COALESCE(${body.commission_amount ?? null}, commission_amount),
+      shipping_amount = COALESCE(${body.shipping_amount ?? null}, shipping_amount),
       updated_at = NOW()
     WHERE id = ${params.id}
     RETURNING *
