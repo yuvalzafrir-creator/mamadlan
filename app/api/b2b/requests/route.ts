@@ -19,6 +19,9 @@ export async function POST(request: NextRequest) {
   if (body.listing_id) {
     const lrows = await sql`SELECT seller_id FROM listings WHERE id = ${body.listing_id} LIMIT 1`
     sellerId = lrows[0]?.seller_id ?? null
+    if (sellerId === user.id) {
+      return NextResponse.json({ error: 'Cannot request your own listing' }, { status: 400 })
+    }
   }
   const rows = await sql`
     INSERT INTO b2b_requests (

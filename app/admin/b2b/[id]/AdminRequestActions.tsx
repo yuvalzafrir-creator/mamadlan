@@ -40,9 +40,10 @@ export function AdminRequestActions({ requestId, status, sellers, shortlisted, q
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         status: won ? 'closed_won' : 'closed_lost',
-        deal_value: won ? Number(dealValue) : null,
-        commission_amount: won ? Number(commission) : null,
-        shipping_amount: won ? Number(shipping) : null,
+        // Inputs are in shekels; stored in agorot like listings.price.
+        deal_value: won ? Math.round(Number(dealValue) * 100) : null,
+        commission_amount: won ? Math.round(Number(commission) * 100) : null,
+        shipping_amount: won ? Math.round(Number(shipping) * 100) : null,
       }),
     })
     if (res.ok) router.refresh()

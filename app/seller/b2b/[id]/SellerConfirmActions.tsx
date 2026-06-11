@@ -22,7 +22,8 @@ export function SellerConfirmActions({ requestId, wantsShipping }: { requestId: 
         e.preventDefault()
         send({
           action: 'confirm',
-          seller_shipping_price: askAdmin ? null : Number(price),
+          // Input is in shekels; stored in agorot like listings.price.
+          seller_shipping_price: askAdmin ? null : Math.round(Number(price) * 100),
           shipping_proposal_requested: askAdmin,
         })
       }} className="card p-4 space-y-3">

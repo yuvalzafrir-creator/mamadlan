@@ -84,10 +84,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       `
       row = moved[0]
       const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mamad-marketplace.vercel.app'
+      // org_name is user-controlled — escape before putting it in HTML.
+      const safeOrg = String(row.org_name ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
       void sendAdminEmail(
         'עסקת B2B ממתינה לאישורך',
         `<div dir="rtl"><p>שני הצדדים אישרו את תנאי העסקה:</p>
-         <p><b>${row.org_name ?? ''}</b> — כמות ${row.quantity ?? '?'}</p>
+         <p><b>${safeOrg}</b> — כמות ${Number(row.quantity) || '?'}</p>
          <p><a href="${base}/admin/b2b/${params.id}">לצפייה וסגירת העסקה</a></p></div>`
       )
     }
