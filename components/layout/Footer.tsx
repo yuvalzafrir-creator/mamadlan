@@ -23,6 +23,7 @@ export function Footer() {
             <h3 className="font-bold mb-3 text-navy-100">ניווט מהיר</h3>
             <ul className="space-y-2 text-sm text-navy-300">
               <li><Link href="/listings" className="hover:text-white transition-colors">מוצרים למכירה</Link></li>
+              <li><Link href="/shelters-guide" className="hover:text-white transition-colors">מדריך מיגון</Link></li>
               <li><Link href="/how-it-works" className="hover:text-white transition-colors">איך זה עובד?</Link></li>
               <li><Link href="/about" className="hover:text-white transition-colors">אודות</Link></li>
               <li><Link href="/seller/register" className="hover:text-white transition-colors">הרשמה כמוכר</Link></li>

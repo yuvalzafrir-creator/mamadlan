@@ -1,22 +1,19 @@
 import Link from 'next/link'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import sql from '@/lib/db'
 import { ListingCard } from '@/components/listings/ListingCard'
 import { BuyerWelcomeModal } from '@/components/onboarding/BuyerWelcomeModal'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function HomePage() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
-  const isConfigured = supabaseUrl.startsWith('https://') && !supabaseUrl.includes('placeholder')
-  let featured: any[] | null = null
-  if (isConfigured) {
-    const supabase = createServerSupabaseClient()
-    const { data } = await supabase
-      .from('listings')
-      .select('*, profiles!seller_id(name, verified, business_name)')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false })
-      .limit(6)
-    featured = data
-  }
+  const featured = await sql`
+    SELECT l.*, u.name as seller_name, u.verified as seller_verified, u.business_name as seller_business_name
+    FROM listings l JOIN users u ON u.id = l.seller_id
+    WHERE l.status = 'active'
+    ORDER BY l.created_at DESC
+    LIMIT 6
+  `
 
   return (
     <main dir="rtl">
@@ -24,7 +21,6 @@ export default async function HomePage() {
 
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-hero-gradient text-white">
-        {/* Background decoration */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-10 w-64 h-64 bg-white rounded-full blur-3xl" />
           <div className="absolute bottom-10 left-10 w-96 h-96 bg-brand-400 rounded-full blur-3xl" />
@@ -46,7 +42,6 @@ export default async function HomePage() {
             רכשו מבני מיגון מעסקים שסיימו את השימוש בהם — במחירים נוחים ועם ביטחון מלא.
           </p>
 
-          {/* Search bar */}
           <form action="/listings" className="flex max-w-xl mx-auto gap-2 animate-slide-up">
             <input
               name="location"
@@ -61,7 +56,6 @@ export default async function HomePage() {
             </button>
           </form>
 
-          {/* Quick filters */}
           <div className="flex flex-wrap justify-center gap-2 mt-4 animate-fade-in">
             {[
               { label: 'ממ"ד', href: '/listings?type=mamad' },
@@ -109,9 +103,9 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        {featured?.length ? (
+        {featured.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featured.map(l => <ListingCard key={l.id} listing={l as any} />)}
+            {featured.map((l: any) => <ListingCard key={l.id} listing={l} />)}
           </div>
         ) : (
           <div className="text-center py-20 text-gray-400">
@@ -148,6 +142,83 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Shelter types preview ── */}
+      <section className="bg-gray-50 py-16 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <p className="text-sm font-semibold text-brand-600 mb-2">מידע חשוב</p>
+            <h2 className="section-title">סוגי מבני מיגון בישראל</h2>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+            {[
+              { value: '2.5M+', label: 'ממ"דים בישראל' },
+              { value: '94%',   label: 'כיסוי בבנייה חדשה' },
+              { value: '12 שנ׳', label: 'חיי שירות מיגונית' },
+              { value: '3',     label: 'סוגי מבני מיגון' },
+            ].map(s => (
+              <div key={s.label} className="card p-4 text-center">
+                <p className="text-2xl font-black text-brand-600">{s.value}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* 3 shelter cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+            {[
+              {
+                icon: '🏠',
+                title: 'ממ"ד',
+                sub: 'מרחב מוגן דירתי',
+                body: 'חדר בטון מזוין המשולב בדירה. חובה בכל בנייה חדשה מ-1992. שטח מינימלי 9 מ"ר.',
+                color: 'border-brand-200 bg-brand-50',
+                tag: 'נפוץ ביותר',
+                tagColor: 'bg-brand-100 text-brand-700',
+              },
+              {
+                icon: '🏗️',
+                title: 'מיגונית',
+                sub: 'מבנה מיגון נייד',
+                body: 'מבנה פלדה עצמאי וניתן להזזה. מתאים למפעלים, בתי ספר ואתרי בנייה. פטור מהיתר עד 25 מ"ר.',
+                color: 'border-amber-200 bg-amber-50',
+                tag: 'גמיש ונייד',
+                tagColor: 'bg-amber-100 text-amber-700',
+              },
+              {
+                icon: '🏛️',
+                title: 'מחסה',
+                sub: 'מרחב מוגן ציבורי',
+                body: 'מבנה תת-קרקעי לאוכלוסייה הציבורית. נמצא בבניינים ציבוריים ושכונות. נגיש לנכים.',
+                color: 'border-green-200 bg-green-50',
+                tag: 'ציבורי',
+                tagColor: 'bg-green-100 text-green-700',
+              },
+            ].map(c => (
+              <div key={c.title} className={`card border p-6 ${c.color} hover:shadow-card-hover transition-shadow`}>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-4xl">{c.icon}</span>
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${c.tagColor}`}>{c.tag}</span>
+                </div>
+                <h3 className="font-black text-lg text-navy-900">{c.title}</h3>
+                <p className="text-xs text-gray-400 mb-2">{c.sub}</p>
+                <p className="text-sm text-gray-600 leading-relaxed">{c.body}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <a
+              href="/shelters-guide"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-navy-900 text-white font-bold rounded-xl hover:bg-navy-800 transition-colors"
+            >
+              למדריך המלא עם תקנות ורגולציה ←
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ── Trust badges ── */}
       <section className="bg-white py-16 px-6">
         <div className="max-w-5xl mx-auto">
@@ -165,6 +236,18 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── B2B section ── */}
+      <section className="bg-white py-16 px-6 border-t border-gray-100">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-sm font-semibold text-brand-600 mb-2">לחברות ולרשויות</p>
+          <h2 className="section-title mb-4">צריכים לרכוש בכמות גדולה?</h2>
+          <p className="text-gray-600 mb-8 max-w-xl mx-auto">
+            עיריות, מועצות וחברות — נהלו תהליך רכש מסודר עם הצעות מחיר ממוכרים מאומתים.
+          </p>
+          <Link href="/b2b" className="btn-primary inline-flex">למסלול הרכש לארגונים ←</Link>
         </div>
       </section>
 
