@@ -3,6 +3,7 @@ import { QuoteThread } from '@/components/b2b/QuoteThread'
 import { SellerQuoteForm } from './SellerQuoteForm'
 import { SellerConfirmActions } from './SellerConfirmActions'
 import sql from '@/lib/db'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,6 +42,9 @@ export default async function SellerB2BDetail({ params }: { params: { id: string
           {request.status === 'new'
             ? <SellerConfirmActions requestId={params.id} wantsShipping={!!request.wants_shipping} />
             : <p className="text-sm font-semibold text-navy-900">סטטוס אישור: {request.status}</p>}
+          {['seller_confirmed', 'pending_admin', 'closed_won'].includes(request.status) && (
+            <Link href={`/b2b/requests/${params.id}/contract`} className="btn-secondary inline-flex">להסכם העסקה ←</Link>
+          )}
         </section>
       )}
 

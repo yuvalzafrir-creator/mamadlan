@@ -3,6 +3,7 @@ import { getSessionUser } from '@/lib/auth'
 import { canTransitionRequest } from '@/lib/b2b/state'
 import type { RequestStatus } from '@/lib/b2b/types'
 import sql from '@/lib/db'
+import { sendAdminEmail } from '@/lib/email'
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const user = await getSessionUser()
@@ -55,6 +56,42 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       WHERE id = ${params.id} RETURNING *
     `
     return NextResponse.json(upd[0])
+  }
+
+  // Agreement path: buyer or the listing seller approves the generated contract.
+  if (body.action === 'agree') {
+    const full = await sql`SELECT * FROM b2b_requests WHERE id = ${params.id} LIMIT 1`
+    const r = full[0]
+    const isBuyer = r.buyer_id === user.id
+    const isSeller = r.seller_id === user.id
+    if (!isBuyer && !isSeller) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    if (r.status !== 'seller_confirmed') {
+      return NextResponse.json({ error: 'Contract not available in this status' }, { status: 400 })
+    }
+    const upd = await sql`
+      UPDATE b2b_requests SET
+        buyer_agreed_at = CASE WHEN ${isBuyer} THEN COALESCE(buyer_agreed_at, NOW()) ELSE buyer_agreed_at END,
+        seller_agreed_at = CASE WHEN ${isSeller} THEN COALESCE(seller_agreed_at, NOW()) ELSE seller_agreed_at END,
+        updated_at = NOW()
+      WHERE id = ${params.id}
+      RETURNING *
+    `
+    let row = upd[0]
+    if (row.buyer_agreed_at && row.seller_agreed_at && canTransitionRequest(row.status, 'pending_admin')) {
+      const moved = await sql`
+        UPDATE b2b_requests SET status = 'pending_admin', updated_at = NOW()
+        WHERE id = ${params.id} RETURNING *
+      `
+      row = moved[0]
+      const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mamad-marketplace.vercel.app'
+      void sendAdminEmail(
+        'עסקת B2B ממתינה לאישורך',
+        `<div dir="rtl"><p>שני הצדדים אישרו את תנאי העסקה:</p>
+         <p><b>${row.org_name ?? ''}</b> — כמות ${row.quantity ?? '?'}</p>
+         <p><a href="${base}/admin/b2b/${params.id}">לצפייה וסגירת העסקה</a></p></div>`
+      )
+    }
+    return NextResponse.json(row)
   }
 
   // Admin path: status changes + close (deal_value, commission, shipping).

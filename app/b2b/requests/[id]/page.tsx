@@ -4,6 +4,7 @@ import { sellerAlias } from '@/lib/b2b/alias'
 import { QuoteThread } from '@/components/b2b/QuoteThread'
 import { BuyerQuoteActions } from './BuyerQuoteActions'
 import sql from '@/lib/db'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,6 +35,9 @@ export default async function BuyerRequestDetail({ params }: { params: { id: str
         <h1 className="text-2xl font-black text-navy-900">{request.org_name} — {request.shelter_type}</h1>
         <p className="text-gray-500">כמות: {request.quantity ?? '—'} · {request.location ?? ''}</p>
       </div>
+      {['seller_confirmed', 'pending_admin', 'closed_won'].includes(request.status) && (
+        <Link href={`/b2b/requests/${params.id}/contract`} className="btn-secondary inline-flex">להסכם העסקה ←</Link>
+      )}
 
       <section>
         <h2 className="section-title mb-3">הצעות מחיר</h2>
