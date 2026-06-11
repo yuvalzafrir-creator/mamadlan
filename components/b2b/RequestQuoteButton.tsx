@@ -2,8 +2,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-export function RequestQuoteButton({ listingId, shelterType, location }: {
-  listingId: string; shelterType: string; location: string | null
+export function RequestQuoteButton({ listingId, shelterType, location, primary = false }: {
+  listingId: string; shelterType: string; location: string | null; primary?: boolean
 }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -36,7 +36,7 @@ export function RequestQuoteButton({ listingId, shelterType, location }: {
   }
 
   if (!open) {
-    return <button onClick={() => setOpen(true)} className="btn-secondary w-full">בקשת הצעת מחיר / הזמנה בכמות</button>
+    return <button onClick={() => setOpen(true)} className={`${primary ? 'btn-primary' : 'btn-secondary'} w-full`}>בקשת הצעת מחיר / הזמנה בכמות</button>
   }
   return (
     <form onSubmit={onSubmit} className="card p-4 space-y-3 mt-3">

@@ -26,7 +26,13 @@ export default async function ListingPage({ params }: { params: { id: string } }
 
   // B2B "request a quote" is for buyers — hide it from the listing's own seller and from admins.
   const viewer = await getSessionUser()
-  const showRequestQuote = !viewer || ((viewer as any).role !== 'admin' && viewer.id !== listing.seller_id)
+  const isAdmin = (viewer as any)?.role === 'admin'
+  const isOwnSeller = viewer?.id === listing.seller_id
+  const isBusiness = !!(viewer as any)?.is_business
+  // Routing: logged-out → both CTAs; business buyer → B2B primary + Stripe secondary;
+  // private buyer → Stripe only; own seller/admin → no B2B CTA.
+  const showRequestQuote = !isAdmin && !isOwnSeller && (!viewer || isBusiness)
+  const b2bPrimary = isBusiness && showRequestQuote
 
   const typeLabel = TYPE_LABELS[listing.type] ?? listing.type
   const priceILS  = (listing.price / 100).toLocaleString('he-IL')
@@ -128,11 +134,22 @@ export default async function ListingPage({ params }: { params: { id: string } }
                 <li className="flex items-center gap-2"><span className="text-green-500">✓</span> תמיכה בעברית</li>
               </ul>
 
-              <Link href={`/checkout/${listing.id}`} className="btn-primary w-full text-base py-3.5 justify-center">
-                לרכישה מאובטחת ←
-              </Link>
-              {showRequestQuote && (
-                <RequestQuoteButton listingId={listing.id} shelterType={listing.type} location={listing.location} />
+              {b2bPrimary ? (
+                <>
+                  <RequestQuoteButton listingId={listing.id} shelterType={listing.type} location={listing.location} primary />
+                  <Link href={`/checkout/${listing.id}`} className="btn-secondary w-full text-base py-3.5 justify-center mt-3">
+                    או רכישה רגילה ←
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href={`/checkout/${listing.id}`} className="btn-primary w-full text-base py-3.5 justify-center">
+                    לרכישה מאובטחת ←
+                  </Link>
+                  {showRequestQuote && (
+                    <RequestQuoteButton listingId={listing.id} shelterType={listing.type} location={listing.location} />
+                  )}
+                </>
               )}
             </div>
           </div>
