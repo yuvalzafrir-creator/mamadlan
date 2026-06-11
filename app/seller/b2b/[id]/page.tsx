@@ -39,7 +39,7 @@ export default async function SellerB2BDetail({ params }: { params: { id: string
             <p className="text-sm text-gray-600">הקונה ביקש משלוח{request.delivery_address ? ` אל: ${request.delivery_address}` : ''}</p>
           )}
           {request.status === 'new'
-            ? <SellerConfirmActions requestId={params.id} />
+            ? <SellerConfirmActions requestId={params.id} wantsShipping={!!request.wants_shipping} />
             : <p className="text-sm font-semibold text-navy-900">סטטוס אישור: {request.status}</p>}
         </section>
       )}

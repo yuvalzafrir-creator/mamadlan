@@ -47,7 +47,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       return NextResponse.json({ error: `Illegal transition ${from} -> ${to}` }, { status: 400 })
     }
     const upd = await sql`
-      UPDATE b2b_requests SET status = ${to}, updated_at = NOW() WHERE id = ${params.id} RETURNING *
+      UPDATE b2b_requests SET
+        status = ${to},
+        seller_shipping_price = ${body.seller_shipping_price ?? null},
+        shipping_proposal_requested = ${body.shipping_proposal_requested ?? false},
+        updated_at = NOW()
+      WHERE id = ${params.id} RETURNING *
     `
     return NextResponse.json(upd[0])
   }
