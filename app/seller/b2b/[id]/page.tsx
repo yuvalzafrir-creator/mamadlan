@@ -2,6 +2,7 @@ import { getSessionUser } from '@/lib/auth'
 import { QuoteThread } from '@/components/b2b/QuoteThread'
 import { SellerQuoteForm } from './SellerQuoteForm'
 import { SellerConfirmActions } from './SellerConfirmActions'
+import { DealProgressBar } from '@/components/b2b/DealProgressBar'
 import sql from '@/lib/db'
 import Link from 'next/link'
 
@@ -33,6 +34,7 @@ export default async function SellerB2BDetail({ params }: { params: { id: string
         <p className="text-gray-600">כמות: {request.quantity ?? '—'} · אזור: {request.location ?? '—'}</p>
         {request.description && <p className="text-gray-700 mt-2">{request.description}</p>}
       </div>
+      <DealProgressBar status={request.status} />
 
       {request.seller_id === user.id && (
         <section className="space-y-3">

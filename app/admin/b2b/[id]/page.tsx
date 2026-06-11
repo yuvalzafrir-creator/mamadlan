@@ -1,5 +1,6 @@
 import { QuoteThread } from '@/components/b2b/QuoteThread'
 import { AdminRequestActions } from './AdminRequestActions'
+import { DealProgressBar } from '@/components/b2b/DealProgressBar'
 import sql from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
@@ -32,6 +33,8 @@ export default async function AdminB2BDetail({ params }: { params: { id: string 
         <p className="text-gray-600">סטטוס: {request.status}</p>
         {request.description && <p className="text-gray-700 mt-2">{request.description}</p>}
       </div>
+
+      <DealProgressBar status={request.status} />
 
       <AdminRequestActions
         requestId={request.id}
