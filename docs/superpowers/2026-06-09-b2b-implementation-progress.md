@@ -91,6 +91,31 @@ New listing-first flow: buyer browses/searches the catalog → opens a listing �
 
 ---
 
+## Phase 3 (v3) — routing, contract, progress, admin hub, email (additive, 2026-06-10)
+
+Spec: [specs/2026-06-10-b2b-v3-contract-routing-design.md](specs/2026-06-10-b2b-v3-contract-routing-design.md). Additive; Phases 1–2 untouched.
+
+| Task | Status | Commit |
+|---|---|---|
+| P3-A migration (seller_shipping_price, shipping_proposal_requested, buyer/seller_agreed_at) | ✅ | `ab28c00` |
+| P3-B `pending_admin` status (TDD) | ✅ | `cf4831e` |
+| P3-C email lib — Resend REST, key-optional (`lib/email.ts`) | ✅ | `dd138d3` |
+| P3-D buyer registration `/register` with private/business + login link | ✅ | `f54e110` |
+| P3-E listing CTA routing (business→B2B primary, private→Stripe only) | ✅ | `d8067f9` |
+| P3-F seller confirm with shipping price / admin-proposal flag | ✅ | `d3e86c4` |
+| P3-G contract page + dual agree → `pending_admin` + admin email | ✅ | `5705d9e` |
+| P3-H DealProgressBar on buyer/seller/admin pages | ✅ | `3b18c5b` |
+| P3-I admin command center (revenue, action queue, live pipeline) | ✅ | `9380cb7` |
+| P3-J verification | ✅ | — |
+
+**Verification:** 42/42 B2B unit tests (+5 new); build green; live smoke: business registration (org fields + `is_business` in session) → listing-first request with shipping → seller confirm with ₪600 shipping price → seller agree → buyer agree → **`pending_admin`** + email trigger logged (`[email skipped — no RESEND_API_KEY]`) → contract page shows parties/total/shipping/both approvals → admin dashboard shows revenue/waiting/pipeline incl. the deal → admin close `closed_won` (deal ₪34,000, commission ₪1,700, shipping ₪600). Smoke request + smoke user deleted.
+
+**Outstanding for the owner:**
+- **`RESEND_API_KEY`** — create a free resend.com account, give me the key; I'll add it to `.env.local` + Vercel. Until then emails are skip-logged.
+- One leftover request created by the owner during preview testing (org "test", buyer yuvalzafrir@gmail.com, id `35e1b29c…`) — left in place intentionally.
+
+---
+
 ## Files created so far
 
 **Pure logic (unit-tested):** `lib/b2b/types.ts`, `lib/b2b/validation.ts`, `lib/b2b/state.ts`, `lib/b2b/alias.ts`, `lib/b2b/anonymize.ts`
