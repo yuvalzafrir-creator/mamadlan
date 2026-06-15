@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter, usePathname } from 'next/navigation'
-import { LanguageToggle } from './LanguageToggle'
 
 export function Navbar() {
   const { data: session } = useSession()
@@ -86,7 +85,6 @@ export function Navbar() {
                 <Link href="/seller/register" className="btn-primary text-sm">הרשמה כמוכר</Link>
               </>
             )}
-            <LanguageToggle />
           </div>
 
           {/* Mobile hamburger */}
@@ -140,9 +138,6 @@ export function Navbar() {
                   <Link href="/seller/register" className="btn-primary text-base justify-center mt-1">הרשמה כמוכר</Link>
                 </>
               )}
-              <div className="mt-2 flex justify-end">
-                <LanguageToggle />
-              </div>
             </div>
           </div>
         </div>
