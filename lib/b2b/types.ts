@@ -1,6 +1,6 @@
 export type OrgType = 'company' | 'municipality' | 'other'
 export type NeedType = 'bulk' | 'sourcing' | 'po_deal' | 'custom'
-export type ShelterType = 'mamad' | 'migounit' | 'other' | 'any'
+export type ShelterType = 'migounit' | 'other' | 'any'
 
 export type RequestStatus =
   | 'new' | 'qualifying' | 'sourcing' | 'quoting'

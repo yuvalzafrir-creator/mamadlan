@@ -7,7 +7,7 @@ import { getSessionUser } from '@/lib/auth'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-const TYPE_LABELS: Record<string, string>      = { mamad: 'ממ"ד', migounit: 'מיגונית', other: 'אחר' }
+const TYPE_LABELS: Record<string, string>      = { migounit: 'מיגונית', other: 'אחר' }
 const SHIPPING_LABELS: Record<string, string>  = {
   seller_ships:   'המוכר מסדר משלוח',
   platform_ships: 'האתר מסדר משלוח',

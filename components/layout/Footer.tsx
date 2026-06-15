@@ -14,7 +14,7 @@ export function Footer() {
               <span className="font-black text-lg">ממ&quot;דלן</span>
             </div>
             <p className="text-navy-300 text-sm leading-relaxed">
-              השוק המוביל לממ&quot;דים ומיגוניות יד שנייה בישראל. רכישה בטוחה, מוכרים מאומתים, משלוח נוח.
+              השוק המוביל למיגוניות יד שנייה בישראל. רכישה בטוחה, מוכרים מאומתים, משלוח נוח.
             </p>
           </div>
 

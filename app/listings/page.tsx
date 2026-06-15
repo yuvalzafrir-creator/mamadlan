@@ -39,7 +39,7 @@ export default async function ListingsPage({
     <main dir="rtl">
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <h1 className="text-3xl font-black text-navy-900 mb-1">ממדים ומיגוניות למכירה</h1>
+          <h1 className="text-3xl font-black text-navy-900 mb-1">מיגוניות למכירה</h1>
           <p className="text-gray-500">נמצאו {listings.length} מוצרים</p>
         </div>
       </div>
@@ -66,7 +66,6 @@ export default async function ListingsPage({
                 <label className="block text-xs font-semibold text-gray-500 mb-1.5">סוג מוצר</label>
                 <select name="type" defaultValue={type ?? ''} className="select text-sm">
                   <option value="">כל הסוגים</option>
-                  <option value="mamad">ממ&quot;ד</option>
                   <option value="migounit">מיגונית</option>
                   <option value="other">אחר</option>
                 </select>
