@@ -28,6 +28,10 @@ describe('validateRequestInput', () => {
     expect(() => validateRequestInput({ ...validRequest, shelter_type: undefined as any }))
       .toThrow('shelter_type is required')
   })
+  it('rejects mamad — structural shelters cannot be resold', () => {
+    expect(() => validateRequestInput({ ...validRequest, shelter_type: 'mamad' as any }))
+      .toThrow('mamad cannot be resold')
+  })
 })
 
 const validQuote = { request_id: 'r1', unit_price: 5000000, units: 3 }

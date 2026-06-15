@@ -76,7 +76,6 @@ export default function SourcingFormPage() {
 
         <select name="shelter_type" className="input w-full" defaultValue="any">
           <option value="any">כל סוג</option>
-          <option value="mamad">ממ&quot;ד</option>
           <option value="migounit">מיגונית</option>
           <option value="other">אחר</option>
         </select>

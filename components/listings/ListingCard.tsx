@@ -15,9 +15,8 @@ type Listing = {
   seller_business_name?: string
 }
 
-const TYPE_LABELS: Record<string, string> = { mamad: 'ממ"ד', migounit: 'מיגונית', other: 'אחר' }
+const TYPE_LABELS: Record<string, string> = { migounit: 'מיגונית', other: 'אחר' }
 const TYPE_COLORS: Record<string, string> = {
-  mamad:    'bg-brand-600',
   migounit: 'bg-amber-500',
   other:    'bg-navy-600',
 }

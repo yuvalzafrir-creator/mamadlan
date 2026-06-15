@@ -4,7 +4,7 @@ export default function HowItWorksPage() {
       n: '01',
       icon: '🔍',
       title: 'חפש מוצר',
-      body: 'סנן לפי סוג (ממ"ד / מיגונית), מידות, מחיר ואזור גיאוגרפי. כל מוצר מציג תג אימות למוכרים שעברו בדיקה.',
+      body: 'סנן לפי סוג (מיגונית / אחר), מידות, מחיר ואזור גיאוגרפי. כל מוצר מציג תג אימות למוכרים שעברו בדיקה.',
       color: 'bg-brand-50 text-brand-600',
     },
     {
@@ -67,7 +67,7 @@ export default function HowItWorksPage() {
       <section className="bg-navy-900 text-white py-16 px-6 text-center">
         <h2 className="text-3xl font-black mb-3">אתה מוכר?</h2>
         <p className="text-navy-300 text-lg mb-8 max-w-xl mx-auto">
-          הצטרף לפלטפורמה ופרסם את הממ&quot;ד שלך תוך דקות. הרשמה חינמית.
+          הצטרף לפלטפורמה ופרסם את המיגונית שלך תוך דקות. הרשמה חינמית.
         </p>
         <a
           href="/seller/register"

@@ -33,10 +33,10 @@ const SHELTERS = [
       'תקן ישראלי 4366 ותיקון 2011',
       'אישור פיקוד העורף לפני אכלוס',
       'בדיקה תקופתית אחת לשנה',
-      'אסור להשתמש לאחסון חפצים קבוע',
+      'חלק בלתי נפרד מהמבנה — לא ניתן לפירוק או למכירה יד שנייה',
     ],
-    badge: 'נפוץ ביותר',
-    badgeColor: 'bg-brand-100 text-brand-700',
+    badge: 'לא ניתן למכירה',
+    badgeColor: 'bg-red-100 text-red-700',
   },
   {
     id: 'migounit',
@@ -269,20 +269,14 @@ export default function SheltersGuidePage() {
 
       {/* CTA */}
       <section className="bg-gradient-to-r from-brand-600 to-brand-700 text-white py-16 px-6 text-center">
-        <h2 className="text-3xl font-black mb-4">מחפשים ממ"ד או מיגונית?</h2>
+        <h2 className="text-3xl font-black mb-4">מחפשים מיגונית?</h2>
         <p className="text-blue-100 text-lg mb-8 max-w-xl mx-auto">
-          עיינו במאות מוצרים ממוכרים מאומתים — מחירים שקופים, תשלום מאובטח.
+          ממ"ד הוא חלק מהמבנה ולא ניתן למכירה — אבל מיגוניות ניידות אפשר לקנות ולהעביר. עיינו במוצרים ממוכרים מאומתים.
         </p>
         <div className="flex flex-wrap gap-4 justify-center">
           <Link
-            href="/listings?type=mamad"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-brand-700 font-bold rounded-xl hover:bg-gray-50 transition-colors shadow-glass text-lg"
-          >
-            ממ"דים למכירה ←
-          </Link>
-          <Link
             href="/listings?type=migounit"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 border border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-colors text-lg"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-brand-700 font-bold rounded-xl hover:bg-gray-50 transition-colors shadow-glass text-lg"
           >
             מיגוניות למכירה ←
           </Link>

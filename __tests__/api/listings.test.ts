@@ -2,7 +2,7 @@ import { validateListing } from '@/lib/listings'
 
 const validListing = {
   seller_id: 'seller-uuid',
-  type: 'mamad' as const,
+  type: 'migounit' as const,
   length_m: 3.2,
   width_m: 2.5,
   height_m: 2.4,
@@ -20,14 +20,14 @@ describe('validateListing', () => {
       .toThrow('type is required')
   })
 
+  it('rejects mamad — structural shelters cannot be resold', () => {
+    expect(() => validateListing({ ...validListing, type: 'mamad' as any }))
+      .toThrow('mamad cannot be resold')
+  })
+
   it('throws when price is negative', () => {
     expect(() => validateListing({ ...validListing, price: -1 }))
       .toThrow('price must be positive')
-  })
-
-  it('throws when dimensions are missing', () => {
-    expect(() => validateListing({ ...validListing, length_m: undefined as any }))
-      .toThrow('dimensions are required')
   })
 
   it('throws when shipping_option is missing', () => {

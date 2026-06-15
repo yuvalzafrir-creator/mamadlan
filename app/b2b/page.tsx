@@ -7,7 +7,7 @@ export default function B2BLandingPage() {
         <p className="text-sm font-semibold text-brand-600 mb-2">רכש לארגונים</p>
         <h1 className="text-4xl font-black text-navy-900 mb-4">פתרונות מיגון לחברות ולרשויות</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          צריכים כמות גדולה של ממ&quot;דים או מיגוניות? נהל תהליך רכש מסודר: שלחו בקשה, קבלו הצעות מחיר ממוכרים מאומתים, ונהלו משא ומתן — הכל במקום אחד.
+          צריכים כמות גדולה של מיגוניות? נהל תהליך רכש מסודר: שלחו בקשה, קבלו הצעות מחיר ממוכרים מאומתים, ונהלו משא ומתן — הכל במקום אחד.
         </p>
         <Link href="/b2b/request" className="btn-primary mt-8 inline-flex">שלחו בקשת רכש ←</Link>
       </section>

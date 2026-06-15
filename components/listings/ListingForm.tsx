@@ -7,7 +7,7 @@ type ListingFormProps = { initialData?: any; listingId?: string }
 export function ListingForm({ initialData, listingId }: ListingFormProps) {
   const router = useRouter()
   const [form, setForm] = useState({
-    type: initialData?.type ?? 'mamad',
+    type: initialData?.type ?? 'migounit',
     length_m: initialData?.length_m?.toString() ?? '',
     width_m: initialData?.width_m?.toString() ?? '',
     height_m: initialData?.height_m?.toString() ?? '',
@@ -89,9 +89,8 @@ export function ListingForm({ initialData, listingId }: ListingFormProps) {
           {/* Type */}
           <div className="card p-6">
             <h2 className="font-bold text-navy-900 mb-4">סוג מוצר</h2>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               {[
-                { value: 'mamad', label: 'ממ"ד', icon: '🏠', sub: 'מרחב מוגן דירתי' },
                 { value: 'migounit', label: 'מיגונית', icon: '🏗️', sub: 'מבנה מיגון נייד' },
                 { value: 'other', label: 'אחר', icon: '📦', sub: 'סוג אחר' },
               ].map(opt => (

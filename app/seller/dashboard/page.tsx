@@ -20,7 +20,7 @@ export default async function SellerDashboard() {
 
   const STATUS_LABEL: Record<string, string> = { active: 'פעיל', sold: 'נמכר', paused: 'מושהה' }
   const STATUS_BADGE: Record<string, string> = { active: 'badge-active', sold: 'badge-sold', paused: 'badge-paused' }
-  const TYPE_LABEL: Record<string, string>   = { mamad: 'ממ"ד', migounit: 'מיגונית', other: 'אחר' }
+  const TYPE_LABEL: Record<string, string>   = { migounit: 'מיגונית', other: 'אחר' }
 
   return (
     <main className="bg-gray-50 min-h-screen" dir="rtl">
@@ -83,7 +83,7 @@ export default async function SellerDashboard() {
             <div className="text-center py-16 text-gray-400">
               <span className="text-5xl block mb-3">📦</span>
               <p className="font-medium text-navy-700">עדיין אין מוצרים</p>
-              <p className="text-sm mt-1 mb-4">פרסם את הממ&quot;ד הראשון שלך עכשיו</p>
+              <p className="text-sm mt-1 mb-4">פרסם את המיגונית הראשונה שלך עכשיו</p>
               <Link href="/seller/listings/new" className="btn-primary inline-flex">פרסם מוצר ←</Link>
             </div>
           ) : (

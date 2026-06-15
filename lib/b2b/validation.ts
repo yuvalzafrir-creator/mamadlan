@@ -5,6 +5,8 @@ export function validateRequestInput(input: RequestInput) {
   if (!input.contact_name) throw new Error('contact_name is required')
   if (!input.need_type || input.need_type.length === 0) throw new Error('need_type is required')
   if (!input.shelter_type) throw new Error('shelter_type is required')
+  // A mamad is a structural reinforced room — it cannot be dismantled and resold.
+  if ((input.shelter_type as string) === 'mamad') throw new Error('mamad cannot be resold')
 }
 
 export function validateQuoteInput(input: QuoteInput) {

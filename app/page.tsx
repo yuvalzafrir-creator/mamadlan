@@ -29,11 +29,11 @@ export default async function HomePage() {
         <div className="relative max-w-5xl mx-auto px-6 py-24 text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm mb-6 animate-fade-in">
             <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse-slow" />
-            שוק יד שנייה לממ&quot;דים ומיגוניות בישראל
+            שוק יד שנייה למיגוניות בישראל
           </div>
 
           <h1 className="text-5xl sm:text-6xl font-black mb-6 leading-tight animate-slide-up">
-            ממדים ומיגוניות
+            מיגוניות
             <br />
             <span className="text-amber-400">למכירה</span>
           </h1>
@@ -58,7 +58,6 @@ export default async function HomePage() {
 
           <div className="flex flex-wrap justify-center gap-2 mt-4 animate-fade-in">
             {[
-              { label: 'ממ"ד', href: '/listings?type=mamad' },
               { label: 'מיגונית', href: '/listings?type=migounit' },
               { label: 'איסוף עצמי', href: '/listings?shipping=pickup_only' },
               { label: 'משלוח כלול', href: '/listings?shipping=platform_ships' },
@@ -111,7 +110,7 @@ export default async function HomePage() {
           <div className="text-center py-20 text-gray-400">
             <span className="text-5xl block mb-4">🏗️</span>
             <p className="text-lg font-medium">עדיין אין מוצרים</p>
-            <p className="text-sm mt-1">היה הראשון לפרסם ממ&quot;ד או מיגונית</p>
+            <p className="text-sm mt-1">היה הראשון לפרסם מיגונית</p>
             <Link href="/seller/register" className="btn-primary mt-4 inline-flex">הרשמה כמוכר</Link>
           </div>
         )}
@@ -172,10 +171,10 @@ export default async function HomePage() {
                 icon: '🏠',
                 title: 'ממ"ד',
                 sub: 'מרחב מוגן דירתי',
-                body: 'חדר בטון מזוין המשולב בדירה. חובה בכל בנייה חדשה מ-1992. שטח מינימלי 9 מ"ר.',
-                color: 'border-brand-200 bg-brand-50',
-                tag: 'נפוץ ביותר',
-                tagColor: 'bg-brand-100 text-brand-700',
+                body: 'חדר בטון מזוין המשולב בדירה — חלק בלתי נפרד מהמבנה, ולכן לא ניתן לפירוק או למכירה יד שנייה. לכן אצלנו תמצאו מיגוניות.',
+                color: 'border-gray-200 bg-gray-50',
+                tag: 'לא ניתן למכירה',
+                tagColor: 'bg-red-100 text-red-700',
               },
               {
                 icon: '🏗️',
@@ -254,7 +253,7 @@ export default async function HomePage() {
       {/* ── Seller CTA ── */}
       <section className="bg-gradient-to-r from-brand-600 to-brand-700 text-white py-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-black mb-4">יש לך ממ&quot;ד לא בשימוש?</h2>
+          <h2 className="text-3xl font-black mb-4">יש לך מיגונית לא בשימוש?</h2>
           <p className="text-blue-100 text-lg mb-8">
             הצטרף לעשרות עסקים שכבר מוכרים דרכנו. הליך הרשמה פשוט, תשלומים מאובטחים.
           </p>

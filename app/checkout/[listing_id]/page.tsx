@@ -93,7 +93,7 @@ export default function CheckoutPage() {
   if (!listing) return <div className="p-6 text-center">טוען...</div>
 
   const typeLabel =
-    { mamad: 'ממד', migounit: 'מיגונית', other: 'אחר' }[listing.type] ?? listing.type
+    { migounit: 'מיגונית', other: 'אחר' }[listing.type] ?? listing.type
 
   return (
     <main className="max-w-lg mx-auto p-6 mt-10" dir="rtl">
